@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.705
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryTree", "BinaryTree\BinaryTree.csproj", "{2489B412-E999-4513-ADB7-321ADCFDA4D0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryTreeFacts", "BinaryTreeFacts\BinaryTreeFacts.csproj", "{1C8DF349-DD95-4347-BA15-681ECF7AE707}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{2489B412-E999-4513-ADB7-321ADCFDA4D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2489B412-E999-4513-ADB7-321ADCFDA4D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2489B412-E999-4513-ADB7-321ADCFDA4D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C8DF349-DD95-4347-BA15-681ECF7AE707}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C8DF349-DD95-4347-BA15-681ECF7AE707}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C8DF349-DD95-4347-BA15-681ECF7AE707}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C8DF349-DD95-4347-BA15-681ECF7AE707}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

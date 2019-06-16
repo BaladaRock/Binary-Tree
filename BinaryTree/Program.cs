@@ -2,9 +2,9 @@
 
 namespace BinaryTree
 {
-    class Program
+    public static class Program
     {
-        static void Main(string[] args)
+        internal static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
         }
