@@ -7,6 +7,10 @@
 
   <PropertyGroup>
     <CodeAnalysisRuleSet>juniormind.ruleset</CodeAnalysisRuleSet>
+    
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
