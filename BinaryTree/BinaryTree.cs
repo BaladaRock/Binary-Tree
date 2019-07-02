@@ -166,23 +166,9 @@ namespace BinaryTree
 
         private IEnumerable<T> InOrderTraversal(Node<T> node)
         {
-            if (node != null)
+            foreach (var treeNode in this)
             {
-                if (node.Left != null)
-                {
-                    yield return node.Left.Data;
-                }
-
-                yield return node.Data;
-            }
-            else
-            {
-                yield break;
-            }
-
-            foreach (T rightNode in PreOrderTraversal(node.Right))
-            {
-                yield return rightNode;
+                yield return treeNode;
             }
         }
 
