@@ -26,7 +26,7 @@ namespace BinaryTree
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            Count = 0;
         }
 
         public bool Contains(T item)
@@ -41,23 +41,9 @@ namespace BinaryTree
 
         public IEnumerator<T> GetEnumerator()
         {
-            if (root != null)
+            foreach (var enumeratedNode in InOrderTraversal(root))
             {
-                if (root.Left != null)
-                {
-                    yield return root.Left.Data;
-                }
-
-                yield return root.Data;
-            }
-            else
-            {
-                yield break;
-            }
-
-            foreach (T rightNode in PreOrderTraversal(root.Right))
-            {
-                yield return rightNode;
+                yield return enumeratedNode;
             }
         }
 
@@ -93,6 +79,8 @@ namespace BinaryTree
                 {
                     InsertRight(node, root);
                 }
+
+                Count++;
             }
         }
 
@@ -166,32 +154,52 @@ namespace BinaryTree
 
         private IEnumerable<T> InOrderTraversal(Node<T> node)
         {
-            foreach (var treeNode in this)
+            if (node == null)
             {
-                yield return treeNode;
+                yield break;
+            }
+
+            if (node.Left != null)
+            {
+                foreach (var leftNode in InOrderTraversal(node.Left))
+                {
+                    yield return leftNode;
+                }
+            }
+
+            yield return node.Data;
+
+            if (node.Right == null)
+            {
+                yield break;
+            }
+
+            foreach (var rightNode in InOrderTraversal(node.Right))
+            {
+                yield return rightNode;
             }
         }
 
         private void InsertLeft(Node<T> child, Node<T> parent)
         {
-            if (parent.Left != null)
+            if (parent.Left == null)
             {
+                parent.Left = child;
                 return;
             }
 
-            parent.Left = child;
-            Count++;
+            InsertLeft(child, parent.Left);
         }
 
         private void InsertRight(Node<T> child, Node<T> parent)
         {
-            if (parent.Right != null)
+            if (parent.Right == null)
             {
+                parent.Right = child;
                 return;
             }
 
-            parent.Right = child;
-            Count++;
+            InsertRight(child, parent.Right);
         }
     }
 }
