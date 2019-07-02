@@ -7,7 +7,7 @@ namespace BinaryTreeFacts
     public class BinaryTreeFacts
     {
         [Fact]
-        public void Test_AddChild_Should_Add_2_Children_To_Root()
+        public void Test_InsertChild_Should_Add_2_Children_To_Root()
         {
             //Given
             var tree = new BinaryTreeCollection<int>();
@@ -17,6 +17,73 @@ namespace BinaryTreeFacts
             tree.InsertChild(new Node<int>(5));
             //Then
             Assert.Equal(new[] { 4, 2, 5 }, tree.PreOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_InsertChild_Should_Correctly_Add_More_Children_To_Root()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>();
+            //When
+            tree.InsertChild(new Node<int>(4));
+            tree.InsertChild(new Node<int>(2));
+            tree.InsertChild(new Node<int>(1));
+            tree.InsertChild(new Node<int>(4));
+            tree.InsertChild(new Node<int>(5));
+            tree.InsertChild(new Node<int>(6));
+            //Then
+            Assert.Equal(new[] { 1, 2, 4, 4, 5, 6 }, tree.InOrderTraversal());
+            Assert.Equal(6, tree.Count);
+        }
+
+        [Fact]
+        public void Test_InsertChild_Should_Correctly_Add_Elements_Repeatedely_As_Left_Children()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>();
+            //When
+            tree.InsertChild(new Node<int>(10));
+            tree.InsertChild(new Node<int>(9));
+            tree.InsertChild(new Node<int>(8));
+            tree.InsertChild(new Node<int>(7));
+            tree.InsertChild(new Node<int>(6));
+            tree.InsertChild(new Node<int>(5));
+            //Then
+            Assert.Equal(new[] { 5, 6, 7, 8, 9, 10 }, tree.InOrderTraversal());
+            Assert.Equal(6, tree.Count);
+        }
+
+        [Fact]
+        public void Test_InsertChild_Should_Correctly_Add_Elements_Repeatedely_As_Right_Children()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>();
+            //When
+            tree.InsertChild(new Node<int>(1));
+            tree.InsertChild(new Node<int>(2));
+            tree.InsertChild(new Node<int>(3));
+            tree.InsertChild(new Node<int>(4));
+            tree.InsertChild(new Node<int>(5));
+            tree.InsertChild(new Node<int>(6));
+            //Then
+            Assert.Equal(new[] { 1, 2, 3, 4, 5, 6 }, tree.InOrderTraversal());
+            Assert.Equal(6, tree.Count);
+        }
+
+        [Fact]
+        public void Test_Count_Property_After_Multiple_Insertions()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>();
+            //When
+            tree.InsertChild(new Node<int>(4));
+            tree.InsertChild(new Node<int>(2));
+            tree.InsertChild(new Node<int>(1));
+            tree.InsertChild(new Node<int>(4));
+            tree.InsertChild(new Node<int>(5));
+            tree.InsertChild(new Node<int>(6));
+            //Then
+            Assert.Equal(6, tree.Count);
         }
 
         [Fact]
