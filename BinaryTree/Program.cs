@@ -6,7 +6,14 @@ namespace BinaryTree
     {
         internal static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var tree = new BinaryTreeCollection<int>();
+            var nodes = new Node<int>(3);
+            foreach (var v in tree.PreOrderTraversal())
+            {
+                Console.WriteLine(" ");
+            }
+
+            Console.ReadKey();
         }
     }
 }

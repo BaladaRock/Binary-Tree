@@ -8,12 +8,10 @@ namespace BinaryTree
     public class BinaryTreeCollection<T> : IBinaryTreeCollection<T>
         where T : IComparable<T>
     {
-        private readonly Node<T> root;
+        private Node<T> root;
 
-        public BinaryTreeCollection(int dimension = 3)
+        public BinaryTreeCollection()
         {
-            root = new Node<T>(default, dimension);
-
             Count = 0;
         }
 
@@ -43,7 +41,24 @@ namespace BinaryTree
 
         public IEnumerator<T> GetEnumerator()
         {
-            throw new NotImplementedException();
+            if (root != null)
+            {
+                if (root.Left != null)
+                {
+                    yield return root.Left.Data;
+                }
+
+                yield return root.Data;
+            }
+            else
+            {
+                yield break;
+            }
+
+            foreach (T rightNode in PreOrderTraversal(root.Right))
+            {
+                yield return rightNode;
+            }
         }
 
         public void RemoveChild(Node<T> node)
@@ -53,7 +68,7 @@ namespace BinaryTree
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return GetEnumerator();
         }
 
         public void InsertChild(Node<T> node)
@@ -65,7 +80,7 @@ namespace BinaryTree
 
             if (Count == 0)
             {
-                root.Data = node.Data;
+                root = new Node<T>(node.Data) { Data = node.Data };
                 Count++;
             }
             else
@@ -88,41 +103,88 @@ namespace BinaryTree
 
         public IEnumerable<T> PreOrderTraversal()
         {
-            return RootFirstTraversal(root);
+            return PreOrderTraversal(root);
         }
 
         public IEnumerable<T> PostOrderTraversal()
         {
-            throw new NotImplementedException();
+            return PostOrderTraversal(root);
         }
 
         public IEnumerable<T> InOrderTraversal()
         {
-            throw new NotImplementedException();
+            return InOrderTraversal(root);
         }
 
-        private IEnumerable<T> RootFirstTraversal(Node<T> node)
+        private IEnumerable<T> PreOrderTraversal(Node<T> node)
         {
-            if (node.Data == null)
+            if (node != null)
+            {
+                yield return node.Data;
+            }
+            else
             {
                 yield break;
             }
 
-            yield return node.Data;
-            RootFirstTraversal(node.Left);
-            RootFirstTraversal(node.Right);
+            foreach (T leftNode in PreOrderTraversal(node.Left))
+            {
+                yield return leftNode;
+            }
+
+            foreach (T rightNode in PreOrderTraversal(node.Right))
+            {
+                yield return rightNode;
+            }
         }
 
-        /*private IEnumerable<T> TraverseRight(Node<T> node)
+        private IEnumerable<T> PostOrderTraversal(Node<T> node)
         {
-            if (node.Right == null)
+            if (node == null)
             {
                 yield break;
             }
 
-            TraverseRight(node.Right);
+            if (node.Left != null)
+            {
+                foreach (var leftNode in PostOrderTraversal(node.Left))
+                {
+                    yield return leftNode;
+                }
+            }
+
+            if (node.Right != null)
+            {
+                foreach (var rightNode in PostOrderTraversal(node.Right))
+                {
+                    yield return rightNode;
+                }
+            }
+
             yield return node.Data;
-        }*/
+        }
+
+        private IEnumerable<T> InOrderTraversal(Node<T> node)
+        {
+            if (node != null)
+            {
+                if (node.Left != null)
+                {
+                    yield return node.Left.Data;
+                }
+
+                yield return node.Data;
+            }
+            else
+            {
+                yield break;
+            }
+
+            foreach (T rightNode in PreOrderTraversal(node.Right))
+            {
+                yield return rightNode;
+            }
+        }
 
         private void InsertLeft(Node<T> child, Node<T> parent)
         {
