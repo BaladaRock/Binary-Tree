@@ -37,6 +37,24 @@ namespace BinaryTreeFacts
         }
 
         [Fact]
+        public void Test_AddMethod_Should_Correctly_Add_More_Children_To_Root()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+                4,
+                2,
+                1,
+                4,
+                5,
+                6
+            };
+            //Then
+            Assert.Equal(new[] { 1, 2, 4, 4, 5, 6 }, tree.InOrderTraversal());
+            Assert.Equal(6, tree.Count);
+        }
+
+        [Fact]
         public void Test_InsertChild_Should_Correctly_Add_Elements_Repeatedely_As_Left_Children()
         {
             //Given
