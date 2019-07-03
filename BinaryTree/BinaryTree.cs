@@ -21,7 +21,8 @@ namespace BinaryTree
 
         public void Add(T item)
         {
-            throw new NotImplementedException();
+            Node<T> nodeToAdd = new Node<T>(item);
+            InsertChild(nodeToAdd);
         }
 
         public void Clear()
@@ -106,14 +107,12 @@ namespace BinaryTree
 
         private IEnumerable<T> PreOrderTraversal(Node<T> node)
         {
-            if (node != null)
-            {
-                yield return node.Data;
-            }
-            else
+            if (node == null)
             {
                 yield break;
             }
+
+            yield return node.Data;
 
             foreach (T leftNode in PreOrderTraversal(node.Left))
             {
