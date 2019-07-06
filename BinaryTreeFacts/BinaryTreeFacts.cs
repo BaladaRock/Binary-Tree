@@ -194,6 +194,37 @@ namespace BinaryTreeFacts
         }
 
         [Fact]
+        public void Test_InOrderTraversal_After_Adding_Same_Value_Multiple_Times()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+                4,
+                4,
+                4
+            };
+            //Then
+            Assert.Equal(new[] { 4, 4, 4 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_InOrderTraversal_Unbalanced_Tree()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>();
+            //When
+            tree.InsertChild(new Node<int>(4));
+            tree.Add(3);
+            tree.InsertChild(new Node<int>(2));
+            tree.Add(0);
+            tree.Add(-1);
+            tree.Add(2);
+            tree.Add(6);
+            //Then
+            Assert.Equal(new[] { -1, 0, 2, 2, 3, 4, 6 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
         public void Test_PostOrderTraversal_Root_Has_2_Children()
         {
             //Given
