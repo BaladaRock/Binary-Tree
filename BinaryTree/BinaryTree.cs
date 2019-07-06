@@ -72,16 +72,7 @@ namespace BinaryTree
             }
             else
             {
-                if (node.Data.CompareTo(root.Data) < 0)
-                {
-                    InsertLeft(node, root);
-                }
-                else
-                {
-                    InsertRight(node, root);
-                }
-
-                Count++;
+                InsertNode(node, root);
             }
         }
 
@@ -179,26 +170,35 @@ namespace BinaryTree
             }
         }
 
-        private void InsertLeft(Node<T> child, Node<T> parent)
+        private void InsertNode(Node<T> child, Node<T> parent)
         {
-            if (parent.Left == null)
+            if (parent == null)
             {
-                parent.Left = child;
                 return;
             }
 
-            InsertLeft(child, parent.Left);
-        }
-
-        private void InsertRight(Node<T> child, Node<T> parent)
-        {
-            if (parent.Right == null)
+            if (parent.Data.CompareTo(child.Data) > 0)
             {
-                parent.Right = child;
-                return;
-            }
+                if (parent.Left == null)
+                {
+                    parent.Left = child;
+                    Count++;
+                    return;
+                }
 
-            InsertRight(child, parent.Right);
+                InsertNode(child, parent.Left);
+            }
+            else
+            {
+                if (parent.Right == null)
+                {
+                    parent.Right = child;
+                    Count++;
+                    return;
+                }
+
+                InsertNode(child, parent.Right);
+            }
         }
     }
 }
