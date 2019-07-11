@@ -327,5 +327,50 @@ namespace BinaryTreeFacts
             Assert.False(enumerator.MoveNext());
         }
 
+        [Fact]
+        public void Test_Clear_Method_Should_Properly_Work_for_a_random_case()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+                5,
+                3,
+                2,
+                6,
+                5
+            };
+            //When
+            tree.Clear();
+            //Then
+            Assert.Empty(tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_ContainsMethod_Should_Return_TRUE_Tree_Has_Only_3_Nodes()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>()
+            {
+            4,
+            2,
+            5
+            };
+            //Then
+            Assert.True(tree.Contains(2));
+        }
+
+        [Fact]
+        public void Test_ContainsMethod_Should_Return_False_Tree_Does_Not_Contain_Given_Node()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>()
+            {
+            4,
+            2,
+            5
+            };
+            //Then
+            Assert.False(tree.Contains(1));
+        }
     }
 }
