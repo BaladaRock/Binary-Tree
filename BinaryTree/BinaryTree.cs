@@ -17,7 +17,7 @@ namespace BinaryTree
 
         public int Count { get; set; }
 
-        public bool IsReadOnly => throw new NotImplementedException();
+        public bool IsReadOnly { get; set; }
 
         public void Add(T item)
         {
@@ -27,12 +27,13 @@ namespace BinaryTree
 
         public void Clear()
         {
+            root = null;
             Count = 0;
         }
 
         public bool Contains(T item)
         {
-            throw new NotImplementedException();
+            return FindNode(root, item) != null;
         }
 
         public void CopyTo(T[] array, int arrayIndex)
@@ -179,26 +180,42 @@ namespace BinaryTree
 
             if (parent.Data.CompareTo(child.Data) > 0)
             {
-                if (parent.Left == null)
-                {
-                    parent.Left = child;
-                    Count++;
-                    return;
-                }
-
-                InsertNode(child, parent.Left);
+                parent.Left = InsertChild(child, parent.Left);
             }
             else
             {
-                if (parent.Right == null)
-                {
-                    parent.Right = child;
-                    Count++;
-                    return;
-                }
-
-                InsertNode(child, parent.Right);
+                parent.Right = InsertChild(child, parent.Right);
             }
+        }
+
+        private Node<T> InsertChild(Node<T> child, Node<T> parent)
+        {
+            if (parent == null)
+            {
+                Count++;
+                return child;
+            }
+
+            InsertNode(child, parent);
+            return parent;
+        }
+
+        private Node<T> FindNode(Node<T> rootNode, T item)
+        {
+            if (rootNode == null)
+            {
+                return null;
+            }
+
+            int result = rootNode.Data.CompareTo(item);
+            if (result == 0)
+            {
+                return rootNode;
+            }
+
+            return result > 0
+                ? FindNode(rootNode.Left, item)
+                : FindNode(rootNode.Right, item);
         }
     }
 }
