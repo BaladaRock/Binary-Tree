@@ -89,6 +89,23 @@ namespace BinaryTreeFacts
         }
 
         [Fact]
+        public void Test_Add_Method_For_Edge_Case()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+                5,
+                2,
+                6,
+                5,
+                3
+            };
+            //Then
+            Assert.Equal(new[] { 3, 5, 2, 6, 5 }, tree.PostOrderTraversal());
+            Assert.Equal(new[] { 2, 3, 5, 5, 6 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
         public void Test_Count_Property_After_Multiple_Insertions()
         {
             //Given
@@ -371,6 +388,87 @@ namespace BinaryTreeFacts
             };
             //Then
             Assert.False(tree.Contains(1));
+        }
+
+        [Fact]
+        public void Test_ContainsMethod_Should_Return_TRUE_Tree_Has_Only_One_Node()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>()
+            {
+            4,
+            };
+            //Then
+            Assert.True(tree.Contains(4));
+        }
+
+        [Fact]
+        public void Test_RemoveChild_Method_Should_Return_FALSE_When_Tree_Does_Not_Contain_Given_Node()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+                5,
+                3,
+                2,
+                6,
+                5
+            };
+            //When
+            var removedElement = new Node<int>(7);
+            tree.RemoveChild(removedElement);
+            //Then
+            Assert.Equal(new[] { 2, 3, 5, 5, 6 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_RemoveChild_Method_Should_Return_TRUE_When_Removed_Node_Is_Left_Leaf()
+        {
+            //Given
+            var node = new Node<int>(3);
+            var tree = new BinaryTreeCollection<int>
+            {
+                5,
+                2,
+                6,
+                5,
+                node.Data,
+            };
+            //Then
+            Assert.True(tree.Remove(node.Data));
+            Assert.Equal(new[] { 2, 5, 5, 6 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_RemoveChild_Method_Remove_LEAF_When_Tree_Has_3_Nodes()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+               2,
+               1,
+               3
+            };
+            //Then
+            Assert.True(tree.Remove(3));
+            Assert.Equal(new[] { 1, 2 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_RemoveChild_Method_Should_Work_Correctly_When_Node_Has_1_Child()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+               2,
+               1,
+               3,
+               4,
+               5
+            };
+            //Then
+            Assert.True(tree.Remove(4));
+            Assert.Equal(new[] { 1, 2, 3, 5 }, tree.InOrderTraversal());
         }
     }
 }
