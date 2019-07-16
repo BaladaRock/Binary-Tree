@@ -89,20 +89,28 @@ namespace BinaryTree
 
         public bool Remove(T item)
         {
-            Node<T> parent = new Node<T>(root.Data);
+            Node<T> parent = null;
             var foundNode = FindNode(root, item, ref parent);
             if (foundNode == null)
             {
                 return false;
             }
 
-            if (IsLeaf(foundNode))
+            if (IsRoot(foundNode))
+            {
+                RemoveRoot(foundNode);
+            }
+            else if (IsLeaf(foundNode))
             {
                 RemoveLeafNode(parent, foundNode);
             }
             else if (CheckForOneChild(parent))
             {
                 RemoveOnlyChild(parent, foundNode);
+            }
+            else if (CheckForTwoChildren(parent))
+            {
+                RemoveSibling(parent, foundNode);
             }
 
             Count--;
@@ -119,10 +127,32 @@ namespace BinaryTree
             Remove(node.Data);
         }
 
+        private bool CheckChildren(Node<T> root, Node<T> foundNode)
+        {
+            bool checkForNull = false;
+            if ((root.Left == null && foundNode.Left == null)
+            || (root.Right == null && foundNode.Right == null))
+            {
+                checkForNull = true;
+            }
+
+            if (!checkForNull)
+            {
+                return root.Left.Equals(foundNode.Left) && root.Right.Equals(foundNode.Right);
+            }
+
+            return checkForNull;
+        }
+
         private bool CheckForOneChild(Node<T> parent)
         {
             return (parent.Right == null && parent.Left != null)
                 || (parent.Left == null && parent.Right != null);
+        }
+
+        private bool CheckForTwoChildren(Node<T> parent)
+        {
+            return parent.Left != null && parent.Right != null;
         }
 
         private Node<T> FindNode(Node<T> rootNode, T item)
@@ -223,6 +253,11 @@ namespace BinaryTree
             return node.Right == null && node.Left == null;
         }
 
+        private bool IsRoot(Node<T> foundNode)
+        {
+            return root.Data.Equals(foundNode.Data) && CheckChildren(root, foundNode);
+        }
+
         private IEnumerable<T> PostOrderTraversal(Node<T> node)
         {
             if (node == null)
@@ -271,6 +306,11 @@ namespace BinaryTree
 
         private void RemoveLeafNode(Node<T> parent, Node<T> leaf)
         {
+            if (Count == 1)
+            {
+                root = null;
+            }
+
             if (parent.Data.CompareTo(leaf.Data) >= 0)
             {
                 parent.Left = null;
@@ -283,8 +323,57 @@ namespace BinaryTree
 
         private void RemoveOnlyChild(Node<T> parent, Node<T> foundNode)
         {
+            if (IsRoot(foundNode))
+            {
+                root = foundNode.Left ?? foundNode.Right;
+            }
+
             parent.Left = foundNode.Left;
             parent.Right = foundNode.Right;
+        }
+
+        private void RemoveRoot(Node<T> rootNode)
+        {
+            if (Count == 1)
+            {
+                root = null;
+            }
+            else if (CheckForOneChild(rootNode))
+            {
+                RemoveRootChild(rootNode);
+            }
+            else
+            {
+                Node<T> temp = rootNode.Right;
+                root = rootNode.Left;
+                InsertChild(temp);
+            }
+        }
+
+        private void RemoveRootChild(Node<T> rootNode)
+        {
+            root = rootNode.Left ?? rootNode.Right;
+        }
+
+        private void RemoveSibling(Node<T> parent, Node<T> foundNode)
+        {
+            SwapWithChild(parent, foundNode);
+        }
+
+        private Node<T> ReplaceWithRoot()
+        {
+            return new Node<T>(root.Data)
+            {
+                Left = root.Left,
+                Right = root.Right
+            };
+        }
+
+        private void SwapWithChild(Node<T> parent, Node<T> child)
+        {
+            Node<T> temp = child.Right;
+            parent.Left = child.Left;
+            InsertChild(temp);
         }
     }
 }
