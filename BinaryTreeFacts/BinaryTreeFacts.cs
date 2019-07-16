@@ -470,5 +470,106 @@ namespace BinaryTreeFacts
             Assert.True(tree.Remove(4));
             Assert.Equal(new[] { 1, 2, 3, 5 }, tree.InOrderTraversal());
         }
+
+        [Fact]
+        public void Test_RemoveMethod_Tree_Only_Has_Rootnode()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>()
+            {
+            4,
+            };
+            //When
+            Assert.True(tree.Remove(4));
+            //Then
+            Assert.Empty(tree);
+        }
+
+        [Fact]
+        public void Test_RemoveChild_When_NODE_is_ROOT_and_has_only_1_child()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+               2,
+               3,
+               4,
+               5
+            };
+            //Then
+            Assert.True(tree.Remove(2));
+            Assert.Equal(new[] { 3, 4, 5 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_RemoveChild_When_Node_is_ROOT_and_has_Only_Left_Child()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+               2,
+               1,
+               0,
+               -1
+            };
+            //Then
+            Assert.True(tree.Remove(2));
+            Assert.Equal(new[] { -1, 0, 1 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_RemoveChild_When_Node_Has_2_Children()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+               4,
+               1,
+               0,
+               5,
+               6,
+               2
+            };
+            //When
+            tree.Remove(1);
+            //Then
+            Assert.Equal(new[] { 0, 2, 4, 5, 6 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_RemoveChild_Node_Has_2_Children_Another_Case()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+               5,
+               3,
+               6,
+               2,
+               4,
+               0,
+               1
+            };
+            //When
+            tree.Remove(3);
+            //Then
+            Assert.Equal(new[] { 0, 1, 2, 4, 5, 6 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_RemoveChild_When_Node_Is_ROOT_And_Has_2_Children()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+               5,
+               3,
+               6,
+            };
+            //When
+            tree.Remove(5);
+            //Then
+            Assert.Equal(new[] { 3, 6 }, tree.InOrderTraversal());
+        }
     }
 }
