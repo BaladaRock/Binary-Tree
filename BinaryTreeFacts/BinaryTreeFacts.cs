@@ -502,7 +502,7 @@ namespace BinaryTreeFacts
         }
 
         [Fact]
-        public void Test_RemoveChild_When_Node_is_ROOT_and_has_Only_Left_Child()
+        public void Test_RemoveChild_When_Node_is_ROOT_and_has_Only_Left_Children()
         {
             //Given
             var tree = new BinaryTreeCollection<int>
@@ -573,6 +573,113 @@ namespace BinaryTreeFacts
             //Then
             Assert.Equal(new[] { -1, 0, 1, 3 }, tree.InOrderTraversal());
         }
+
+        public void Test_RemoveChild_another_edge_case()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+               5,
+               3,
+               6,
+               0,
+               4,
+               7,
+               4
+            };
+            //When
+            tree.Remove(3);
+            //Then
+            Assert.Equal(new[] { 0, 4, 4, 5, 6, 7 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_RemoveChild_Check_That_NO_Node_is_LOST_during_Deletion_process()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+               4,
+               0,
+               5,
+               -1,
+               -2,
+               2,
+               1,
+               3,
+               6
+            };
+            //When
+            tree.Remove(1);
+            //Then
+            Assert.Equal(new[] { -2, -1, 0, 2, 3, 4, 5, 6 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_RemoveChild_Check_Edge_Case()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+               20,
+               7,
+               30,
+               4,
+               15,
+               3,
+               5,
+               12,
+               17,
+               16,
+               18
+            };
+            //When
+            tree.Remove(15);
+            //Then
+            Assert.Equal(new[] { 3, 4, 5, 7, 12, 16, 17, 18, 20, 30 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_RemoveChild_Edge_Case_When_Node_IS_ROOT()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+               20,
+               6,
+               1,
+               30,
+               21,
+               31,
+               22,
+               8,
+            };
+            //When
+            tree.Remove(20);
+            //Then
+            Assert.Equal(new[] { 1, 6, 8, 21, 22, 30, 31 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_RemoveChild_Check_That_NO_Node_is_LOST_When_NodeToDelete_Is_ROOT()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+               4,
+               1,
+               5,
+               6,
+               0,
+               2,
+               3
+            };
+            //When
+            tree.Remove(4);
+            //Then
+            Assert.Equal(new[] { 0, 1, 2, 3, 5, 6 }, tree.InOrderTraversal());
+        }
+
 
         [Fact]
         public void Test_RemoveChild_When_Node_Is_ROOT_And_Has_2_Children()
