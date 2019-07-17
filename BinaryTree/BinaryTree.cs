@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace BinaryTree
 {
@@ -25,8 +24,22 @@ namespace BinaryTree
             InsertChild(nodeToAdd);
         }
 
+        public BinaryTreeCollection<T> AsReadOnly()
+        {
+            var readOnlyTree = new BinaryTreeCollection<T>();
+            foreach (var node in this)
+            {
+                readOnlyTree.Add(node);
+            }
+
+            readOnlyTree.IsReadOnly = true;
+            return readOnlyTree;
+        }
+
         public void Clear()
         {
+            ThrowReadOnly();
+
             root = null;
             Count = 0;
         }
@@ -38,7 +51,14 @@ namespace BinaryTree
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            ThrowCopyToExceptions(array, arrayIndex);
+
+            var enumerator = GetEnumerator();
+            for (int i = arrayIndex; i < Count + arrayIndex; i++)
+            {
+                enumerator.MoveNext();
+                array[i] = enumerator.Current;
+            }
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -61,10 +81,7 @@ namespace BinaryTree
 
         public void InsertChild(Node<T> node)
         {
-            if (node == null)
-            {
-                return;
-            }
+            ThrowInsertExceptions(node);
 
             if (Count == 0)
             {
@@ -89,6 +106,8 @@ namespace BinaryTree
 
         public bool Remove(T item)
         {
+            ThrowReadOnly();
+
             Node<T> parent = null;
             var foundNode = FindNode(root, item, ref parent);
             if (foundNode == null)
@@ -104,11 +123,7 @@ namespace BinaryTree
             {
                 RemoveLeafNode(parent, foundNode);
             }
-            else if (CheckForOneChild(parent))
-            {
-                RemoveOnlyChild(parent, foundNode);
-            }
-            else if (CheckForTwoChildren(parent))
+            else
             {
                 RemoveSibling(parent, foundNode);
             }
@@ -119,29 +134,14 @@ namespace BinaryTree
 
         public void RemoveChild(Node<T> node)
         {
-            if (node == null)
-            {
-                return;
-            }
-
+            ThrowNull(node);
             Remove(node.Data);
         }
 
         private bool CheckChildren(Node<T> root, Node<T> foundNode)
         {
-            bool checkForNull = false;
-            if ((root.Left == null && foundNode.Left == null)
-            || (root.Right == null && foundNode.Right == null))
-            {
-                checkForNull = true;
-            }
-
-            if (!checkForNull)
-            {
-                return root.Left.Equals(foundNode.Left) && root.Right.Equals(foundNode.Right);
-            }
-
-            return checkForNull;
+            return CheckIfChildrenAreNull(root, foundNode)
+                || root.Left.Equals(foundNode.Left) && root.Right.Equals(foundNode.Right);
         }
 
         private bool CheckForOneChild(Node<T> parent)
@@ -150,9 +150,10 @@ namespace BinaryTree
                 || (parent.Left == null && parent.Right != null);
         }
 
-        private bool CheckForTwoChildren(Node<T> parent)
+        private bool CheckIfChildrenAreNull(Node<T> rootNode, Node<T> foundNode)
         {
-            return parent.Left != null && parent.Right != null;
+            return rootNode.Left == null && foundNode.Left == null
+                || rootNode.Right == null && foundNode.Right == null;
         }
 
         private Node<T> FindNode(Node<T> rootNode, T item)
@@ -219,7 +220,7 @@ namespace BinaryTree
             }
         }
 
-        private Node<T> InsertChild(Node<T> child, Node<T> parent)
+        private Node<T> DoInsertion(Node<T> child, Node<T> parent)
         {
             if (parent == null)
             {
@@ -233,18 +234,13 @@ namespace BinaryTree
 
         private void InsertNode(Node<T> child, Node<T> parent)
         {
-            if (parent == null)
-            {
-                return;
-            }
-
             if (parent.Data.CompareTo(child.Data) >= 0)
             {
-                parent.Left = InsertChild(child, parent.Left);
+                parent.Left = DoInsertion(child, parent.Left);
             }
             else
             {
-                parent.Right = InsertChild(child, parent.Right);
+                parent.Right = DoInsertion(child, parent.Right);
             }
         }
 
@@ -306,11 +302,6 @@ namespace BinaryTree
 
         private void RemoveLeafNode(Node<T> parent, Node<T> leaf)
         {
-            if (Count == 1)
-            {
-                root = null;
-            }
-
             if (parent.Data.CompareTo(leaf.Data) >= 0)
             {
                 parent.Left = null;
@@ -321,38 +312,30 @@ namespace BinaryTree
             }
         }
 
-        private void RemoveOnlyChild(Node<T> parent, Node<T> foundNode)
-        {
-            if (IsRoot(foundNode))
-            {
-                root = foundNode.Left ?? foundNode.Right;
-            }
-
-            parent.Left = foundNode.Left;
-            parent.Right = foundNode.Right;
-        }
-
         private void RemoveRoot(Node<T> rootNode)
         {
             if (Count == 1)
             {
                 root = null;
             }
-            else if (CheckForOneChild(rootNode))
-            {
-                RemoveRootChild(rootNode);
-            }
             else
             {
-                Node<T> temp = rootNode.Right;
-                root = rootNode.Left;
-                InsertChild(temp);
+                SwapRootNode(rootNode);
             }
         }
 
-        private void RemoveRootChild(Node<T> rootNode)
+        private void SwapRootNode(Node<T> rootNode)
         {
-            root = rootNode.Left ?? rootNode.Right;
+            if (root.Left == null || root.Data.CompareTo(root.Left.Data) < 0)
+            {
+                root.Right.Left = root.Left;
+                root = root.Right;
+            }
+            else
+            {
+                root.Left.Right = root.Right;
+                root = root.Left;
+            }
         }
 
         private void RemoveSibling(Node<T> parent, Node<T> foundNode)
@@ -360,20 +343,74 @@ namespace BinaryTree
             SwapWithChild(parent, foundNode);
         }
 
-        private Node<T> ReplaceWithRoot()
-        {
-            return new Node<T>(root.Data)
-            {
-                Left = root.Left,
-                Right = root.Right
-            };
-        }
-
         private void SwapWithChild(Node<T> parent, Node<T> child)
         {
-            Node<T> temp = child.Right;
-            parent.Left = child.Left;
-            InsertChild(temp);
+            Node<T> temp = child.Left;
+
+            if (parent.Data.CompareTo(child.Data) < 0)
+            {
+                temp = child.Right;
+                temp.Left = child.Left;
+                parent.Right = temp;
+            }
+            else
+            {
+                temp.Right = child.Right;
+                parent.Left = temp;
+            }
+        }
+
+        private void ThrowArgumentException(T[] array, int arrayIndex)
+        {
+            if (array.Length >= Count + arrayIndex)
+            {
+                return;
+            }
+
+            throw new ArgumentException(message: "Copying proccess could not be initialised\n", paramName: nameof(array));
+        }
+
+        private void ThrowCopyToExceptions(T[] array, int arrayIndex)
+        {
+            ThrowNull(array);
+            ThrowIndexException(arrayIndex);
+            ThrowArgumentException(array, arrayIndex);
+        }
+
+        private void ThrowIndexException(int arrayIndex)
+        {
+            if (arrayIndex >= 0)
+            {
+                return;
+            }
+
+            throw new ArgumentOutOfRangeException(paramName: nameof(arrayIndex), message: "Give a valid index!\n");
+        }
+
+        private void ThrowInsertExceptions(Node<T> node)
+        {
+            ThrowReadOnly();
+            ThrowNull(node);
+        }
+
+        private void ThrowNull(object element)
+        {
+            if (element != null)
+            {
+                return;
+            }
+
+            throw new ArgumentNullException(nameof(element));
+        }
+
+        private void ThrowReadOnly()
+        {
+            if (!IsReadOnly)
+            {
+                return;
+            }
+
+            throw new NotSupportedException(message: "Your BST is readonly!\n");
         }
     }
 }
