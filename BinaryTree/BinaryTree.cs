@@ -115,13 +115,9 @@ namespace BinaryTree
                 return false;
             }
 
-            if (IsRoot(foundNode))
+            if (parent == null)
             {
                 RemoveRoot(foundNode);
-            }
-            else if (IsLeaf(foundNode))
-            {
-                RemoveLeafNode(parent, foundNode);
             }
             else
             {
@@ -138,22 +134,43 @@ namespace BinaryTree
             Remove(node.Data);
         }
 
-        private bool CheckChildren(Node<T> root, Node<T> foundNode)
+        private bool CheckForOneChild(Node<T> nodeToRemove)
         {
-            return CheckIfChildrenAreNull(root, foundNode)
-                || root.Left.Equals(foundNode.Left) && root.Right.Equals(foundNode.Right);
+            return (nodeToRemove.Right == null && nodeToRemove.Left != null)
+                || (nodeToRemove.Left == null && nodeToRemove.Right != null);
         }
 
-        private bool CheckForOneChild(Node<T> parent)
+        private Node<T> DoInsertion(Node<T> child, Node<T> parent)
         {
-            return (parent.Right == null && parent.Left != null)
-                || (parent.Left == null && parent.Right != null);
+            if (parent == null)
+            {
+                Count++;
+                return child;
+            }
+
+            InsertNode(child, parent);
+            return parent;
         }
 
-        private bool CheckIfChildrenAreNull(Node<T> rootNode, Node<T> foundNode)
+        private Node<T> FindLeaf(Node<T> parent)
         {
-            return rootNode.Left == null && foundNode.Left == null
-                || rootNode.Right == null && foundNode.Right == null;
+            var newNode = GetChild(parent);
+            if (IsLeaf(newNode))
+            {
+                return newNode;
+            }
+
+            return FindLeaf(newNode.Left ?? newNode.Right);
+        }
+
+        private Node<T> FindNewRoot(Node<T> node)
+        {
+            if (IsLeaf(node) || CheckForOneChild(node))
+            {
+                return node;
+            }
+
+            return GetChild(node);
         }
 
         private Node<T> FindNode(Node<T> rootNode, T item)
@@ -167,11 +184,6 @@ namespace BinaryTree
             if (rootNode == null)
             {
                 return null;
-            }
-
-            if (Count == 1)
-            {
-                parent = rootNode;
             }
 
             if (rootNode.Left?.Data.Equals(item) == true || rootNode.Right?.Data.Equals(item) == true)
@@ -190,6 +202,11 @@ namespace BinaryTree
             return result > 0
                 ? FindNode(rootNode.Left, item, ref parent)
                 : FindNode(rootNode.Right, item, ref parent);
+        }
+
+        private Node<T> GetChild(Node<T> foundNode)
+        {
+            return foundNode.Left ?? foundNode.Right ?? foundNode;
         }
 
         private IEnumerable<T> InOrderTraversal(Node<T> node)
@@ -220,18 +237,6 @@ namespace BinaryTree
             }
         }
 
-        private Node<T> DoInsertion(Node<T> child, Node<T> parent)
-        {
-            if (parent == null)
-            {
-                Count++;
-                return child;
-            }
-
-            InsertNode(child, parent);
-            return parent;
-        }
-
         private void InsertNode(Node<T> child, Node<T> parent)
         {
             if (parent.Data.CompareTo(child.Data) >= 0)
@@ -247,11 +252,6 @@ namespace BinaryTree
         private bool IsLeaf(Node<T> node)
         {
             return node.Right == null && node.Left == null;
-        }
-
-        private bool IsRoot(Node<T> foundNode)
-        {
-            return root.Data.Equals(foundNode.Data) && CheckChildren(root, foundNode);
         }
 
         private IEnumerable<T> PostOrderTraversal(Node<T> node)
@@ -324,39 +324,57 @@ namespace BinaryTree
             }
         }
 
+        private void RemoveSibling(Node<T> parent, Node<T> foundNode)
+        {
+            if (IsLeaf(foundNode))
+            {
+                RemoveLeafNode(parent, foundNode);
+                return;
+            }
+
+            if (CheckForOneChild(foundNode))
+            {
+                if (parent.Data.CompareTo(foundNode.Data) > 0)
+                {
+                    parent.Left = GetChild(foundNode);
+                }
+                else
+                {
+                    parent.Right = GetChild(foundNode);
+                }
+
+                return;
+            }
+
+            SwapWithChild(parent, foundNode);
+        }
+
         private void SwapRootNode(Node<T> rootNode)
         {
-            if (root.Left == null || root.Data.CompareTo(root.Left.Data) < 0)
+            if (CheckForOneChild(root))
             {
-                root.Right.Left = root.Left;
-                root = root.Right;
+                root = root.Left ?? root.Right;
             }
             else
             {
-                root.Left.Right = root.Right;
-                root = root.Left;
+                Node<T> newRoot = FindNewRoot(root.Right);
+                newRoot.Left = root.Left;
+                root = root.Right;
             }
-        }
-
-        private void RemoveSibling(Node<T> parent, Node<T> foundNode)
-        {
-            SwapWithChild(parent, foundNode);
         }
 
         private void SwapWithChild(Node<T> parent, Node<T> child)
         {
-            Node<T> temp = child.Left;
+            Node<T> newNode = FindLeaf(child.Right);
+            newNode.Left = child.Left;
 
             if (parent.Data.CompareTo(child.Data) < 0)
             {
-                temp = child.Right;
-                temp.Left = child.Left;
-                parent.Right = temp;
+                parent.Right = child.Right;
             }
             else
             {
-                temp.Right = child.Right;
-                parent.Left = temp;
+                parent.Left = child.Right;
             }
         }
 
