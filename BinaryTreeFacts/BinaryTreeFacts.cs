@@ -557,6 +557,24 @@ namespace BinaryTreeFacts
         }
 
         [Fact]
+        public void Test_RemoveChild_Edge_Case()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+               -1,
+               2,
+               0,
+               1,
+               3
+            };
+            //When
+            tree.Remove(2);
+            //Then
+            Assert.Equal(new[] { -1, 0, 1, 3 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
         public void Test_RemoveChild_When_Node_Is_ROOT_And_Has_2_Children()
         {
             //Given
@@ -570,6 +588,71 @@ namespace BinaryTreeFacts
             tree.Remove(5);
             //Then
             Assert.Equal(new[] { 3, 6 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_CopyTo_Should_Copy_Nodes_When_Array_Has_Enough_Capacity()
+        {
+            //Given
+            int[] array = new int[5];
+            var tree = new BinaryTreeCollection<int>
+            {
+               5,
+               3,
+               6,
+            };
+            //When
+            tree.CopyTo(array, 1);
+            //Then
+            Assert.Equal(new[] { 0, 3, 5, 6, 0 }, array);
+        }
+
+        [Fact]
+        public void Test_CopyTo_Should_Not_Copy_Nodes_When_Array_Does_Not_Have_Enough_Capacity()
+        {
+            //Given
+            int[] array = new int[3];
+            var tree = new BinaryTreeCollection<int>
+            {
+               5,
+               3,
+               6,
+            };
+            //When
+            Assert.Throws<ArgumentException>(() => tree.CopyTo(array, 1));
+            //Then
+            Assert.Equal(new[] { 0, 0, 0 }, array);
+        }
+
+        [Fact]
+        public void Test_AsReadOnly_Should_Return_False_When_List_Is_NOT_RO()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+               5,
+               3,
+               6,
+            };
+            //Then
+            Assert.False(tree.IsReadOnly);
+        }
+
+        [Fact]
+        public void Test_AsReadOnly_Should_Return_True_When_List_Is_RO()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>
+            {
+               5,
+               3,
+               6,
+            };
+            //When
+            var roTree = tree.AsReadOnly();
+            //Then
+            Assert.False(tree.IsReadOnly);
+            Assert.True(roTree.IsReadOnly);
         }
     }
 }
