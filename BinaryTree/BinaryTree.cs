@@ -154,7 +154,7 @@ namespace BinaryTree
 
         private Node<T> FindLeaf(Node<T> parent)
         {
-            var newNode = GetChild(parent);
+            var newNode = GetNodeToSwap(parent);
             if (IsLeaf(newNode))
             {
                 return newNode;
@@ -170,7 +170,7 @@ namespace BinaryTree
                 return node;
             }
 
-            return GetChild(node);
+            return GetNodeToSwap(node);
         }
 
         private Node<T> FindNode(Node<T> rootNode, T item)
@@ -204,7 +204,7 @@ namespace BinaryTree
                 : FindNode(rootNode.Right, item, ref parent);
         }
 
-        private Node<T> GetChild(Node<T> foundNode)
+        private Node<T> GetNodeToSwap(Node<T> foundNode)
         {
             return foundNode.Left ?? foundNode.Right ?? foundNode;
         }
@@ -334,13 +334,13 @@ namespace BinaryTree
 
             if (CheckForOneChild(foundNode))
             {
-                if (parent.Data.CompareTo(foundNode.Data) > 0)
+                if (parent.Right == foundNode)
                 {
-                    parent.Left = GetChild(foundNode);
+                    parent.Right = GetNodeToSwap(foundNode);
                 }
                 else
                 {
-                    parent.Right = GetChild(foundNode);
+                    parent.Left = GetNodeToSwap(foundNode);
                 }
 
                 return;
@@ -368,7 +368,7 @@ namespace BinaryTree
             Node<T> newNode = FindLeaf(child.Right);
             newNode.Left = child.Left;
 
-            if (parent.Data.CompareTo(child.Data) < 0)
+            if (parent.Right == child)
             {
                 parent.Right = child.Right;
             }
