@@ -761,5 +761,43 @@ namespace BinaryTreeFacts
             Assert.False(tree.IsReadOnly);
             Assert.True(roTree.IsReadOnly);
         }
+
+        [Fact]
+        public void Test_Array_Of_Values_When_Size_Is_1_Add_Method_Should_Work_Correctly()
+        {
+            //Given, when
+            var tree = new BinaryTreeCollection<int>(1)
+            {
+               1
+            };
+            //Then
+            Assert.Equal(new[] { 1 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_Size_Is_1_Add_Method_after_2_elements_have_been_added()
+        {
+            //Given, when
+            var tree = new BinaryTreeCollection<int>(1)
+            {
+               1,
+               2
+            };
+            //Then
+            Assert.Equal(new[] { 1, 2 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_Size_Is_2_Add_Method_should_FILL_current_array_before_proceeding()
+        {
+            //Given, when
+            var tree = new BinaryTreeCollection<int>(2)
+            {
+               1,
+               2
+            };
+            //Then
+            Assert.Equal(new[] { 1, 2 }, tree.InOrderTraversal());
+        }
     }
 }
