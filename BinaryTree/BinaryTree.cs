@@ -9,7 +9,7 @@ namespace BinaryTree
     {
         private Node<T> root;
 
-        public BinaryTreeCollection()
+        public BinaryTreeCollection(int size = 1)
         {
             Count = 0;
         }
@@ -85,7 +85,7 @@ namespace BinaryTree
 
             if (Count == 0)
             {
-                root = new Node<T>(node.Data) { Data = node.Data };
+                root = new Node<T>(node.Data);
                 Count++;
             }
             else
@@ -224,7 +224,7 @@ namespace BinaryTree
                 }
             }
 
-            yield return node.Data;
+            yield return node.GetElements();
 
             if (node.Right == null)
             {
@@ -238,6 +238,17 @@ namespace BinaryTree
         }
 
         private void InsertNode(Node<T> child, Node<T> parent)
+        {
+            if (!parent.IsFull())
+            {
+                parent.AddValue(child.Data);
+                return;
+            }
+
+            AddNewNode(child, parent);
+        }
+
+        private void AddNewNode(Node<T> child, Node<T> parent)
         {
             if (parent.Data.CompareTo(child.Data) >= 0)
             {
