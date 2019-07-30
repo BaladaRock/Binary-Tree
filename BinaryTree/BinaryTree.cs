@@ -224,7 +224,10 @@ namespace BinaryTree
                 }
             }
 
-            yield return node.GetElements();
+            foreach (var element in node.GetElements())
+            {
+                yield return element;
+            }
 
             if (node.Right == null)
             {
@@ -288,7 +291,10 @@ namespace BinaryTree
                 }
             }
 
-            yield return node.Data;
+            foreach (var element in node.GetElements())
+            {
+                yield return element;
+            }
         }
 
         private IEnumerable<T> PreOrderTraversal(Node<T> node)
@@ -298,7 +304,10 @@ namespace BinaryTree
                 yield break;
             }
 
-            yield return node.Data;
+            foreach (var element in node.GetElements())
+            {
+                yield return element;
+            }
 
             foreach (T leftNode in PreOrderTraversal(node.Left))
             {
