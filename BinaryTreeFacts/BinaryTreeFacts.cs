@@ -799,5 +799,56 @@ namespace BinaryTreeFacts
             //Then
             Assert.Equal(new[] { 1, 2 }, tree.InOrderTraversal());
         }
+
+        [Fact]
+        public void Test_InOrderTraversal_When_Size_Is_2_()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>(2)
+            {
+                4,
+                4,
+                5,
+                6
+            };
+            //Then
+            Assert.Equal(new[] { 4, 4, 5, 6 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_InOrderTraversal_Size_Is_Larger()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>(5)
+            {
+                1,
+                2,
+                3,
+                5,
+                6,
+                4,
+                7,
+                8,
+                9
+            };
+            //Then
+            Assert.Equal(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_PreOrderTraversal_When_Size_Is_2_()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>(2)
+            {
+                1,
+                2,
+                3,
+                4
+            };
+            //Then
+            Assert.Equal(new[] { 1, 2, 3, 4 }, tree.InOrderTraversal());
+        }
+
     }
 }
