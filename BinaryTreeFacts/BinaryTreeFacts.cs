@@ -680,7 +680,6 @@ namespace BinaryTreeFacts
             Assert.Equal(new[] { 0, 1, 2, 3, 5, 6 }, tree.InOrderTraversal());
         }
 
-
         [Fact]
         public void Test_RemoveChild_When_Node_Is_ROOT_And_Has_2_Children()
         {
@@ -850,5 +849,50 @@ namespace BinaryTreeFacts
             Assert.Equal(new[] { 1, 2, 3, 4 }, tree.InOrderTraversal());
         }
 
+        [Fact]
+        public void Test_FindNode_Method_Check_That_Node_Exists()
+        {
+            //Given
+            var node = new Node<int>(3) { 1 };
+            var tree = new BinaryTreeCollection<int>(3)
+            {
+               5,
+               3,
+               6,
+            };
+            //When
+            var checkNode = tree.FindNode(node, 3);
+            //Then
+            Assert.Equal(node, checkNode);
+        }
+
+        [Fact]
+        public void Test_AddMethod_Check_Node_After_Inserting_More_Elements_Then_Size()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>();
+            var node = new Node<int>(new[] { 1, 2, 3 }, 3);
+            //When
+            tree.InsertChild(node);
+            tree.Add(3);
+            //Then
+            Assert.NotNull(tree.FindNode(new Node<int>(3, 3), 3));
+        }
+
+        [Fact]
+        public void Test_FindNode_Check_Parent_And_Child_After_Insertion()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>(3)
+            {
+               5,
+               3,
+               6,
+            };
+            //When
+            var checkNode = tree.FindNode(new Node<int>(6, 3), 6);
+            //Then
+            Assert.NotNull(checkNode);
+        }
     }
 }
