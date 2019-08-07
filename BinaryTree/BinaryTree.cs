@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("BinaryTreeFacts")]
 
 namespace BinaryTree
 {
@@ -11,6 +14,7 @@ namespace BinaryTree
 
         public BinaryTreeCollection(int size = 1)
         {
+            Size = size;
             Count = 0;
         }
 
@@ -18,9 +22,11 @@ namespace BinaryTree
 
         public bool IsReadOnly { get; set; }
 
+        public int Size { get; }
+
         public void Add(T item)
         {
-            Node<T> nodeToAdd = new Node<T>(item);
+            Node<T> nodeToAdd = new Node<T>(item, Size);
             InsertChild(nodeToAdd);
         }
 
@@ -85,13 +91,14 @@ namespace BinaryTree
 
             if (Count == 0)
             {
-                root = new Node<T>(node.Data);
-                Count++;
+                root = new Node<T>(node.Data, Size);
             }
             else
             {
-                InsertNode(node, root);
+                root.Add(node.Data);
             }
+
+            Count++;
         }
 
         public IEnumerable<T> PostOrderTraversal()
@@ -134,22 +141,16 @@ namespace BinaryTree
             Remove(node.Data);
         }
 
+        internal Node<T> FindNode(Node<T> rootNode, T item)
+        {
+            var newNode = new Node<T>(root.Data);
+            return FindNode(rootNode, item, ref newNode);
+        }
+
         private bool CheckForOneChild(Node<T> nodeToRemove)
         {
             return (nodeToRemove.Right == null && nodeToRemove.Left != null)
                 || (nodeToRemove.Left == null && nodeToRemove.Right != null);
-        }
-
-        private Node<T> DoInsertion(Node<T> child, Node<T> parent)
-        {
-            if (parent == null)
-            {
-                Count++;
-                return child;
-            }
-
-            InsertNode(child, parent);
-            return parent;
         }
 
         private Node<T> FindLeaf(Node<T> parent)
@@ -171,12 +172,6 @@ namespace BinaryTree
             }
 
             return GetNodeToSwap(node);
-        }
-
-        private Node<T> FindNode(Node<T> rootNode, T item)
-        {
-            var newNode = new Node<T>(root.Data);
-            return FindNode(rootNode, item, ref newNode);
         }
 
         private Node<T> FindNode(Node<T> rootNode, T item, ref Node<T> parent)
@@ -224,7 +219,7 @@ namespace BinaryTree
                 }
             }
 
-            foreach (var element in node.GetElements())
+            foreach (var element in node)
             {
                 yield return element;
             }
@@ -237,29 +232,6 @@ namespace BinaryTree
             foreach (var rightNode in InOrderTraversal(node.Right))
             {
                 yield return rightNode;
-            }
-        }
-
-        private void InsertNode(Node<T> child, Node<T> parent)
-        {
-            if (!parent.IsFull())
-            {
-                parent.AddValue(child.Data);
-                return;
-            }
-
-            AddNewNode(child, parent);
-        }
-
-        private void AddNewNode(Node<T> child, Node<T> parent)
-        {
-            if (parent.Data.CompareTo(child.Data) >= 0)
-            {
-                parent.Left = DoInsertion(child, parent.Left);
-            }
-            else
-            {
-                parent.Right = DoInsertion(child, parent.Right);
             }
         }
 
@@ -291,7 +263,7 @@ namespace BinaryTree
                 }
             }
 
-            foreach (var element in node.GetElements())
+            foreach (var element in node)
             {
                 yield return element;
             }
@@ -304,7 +276,7 @@ namespace BinaryTree
                 yield break;
             }
 
-            foreach (var element in node.GetElements())
+            foreach (var element in node)
             {
                 yield return element;
             }
