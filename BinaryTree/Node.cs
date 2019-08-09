@@ -22,7 +22,7 @@ namespace BinaryTree
             ArrayCount = 1;
         }
 
-        public T Data => dataArray[0];
+        public T FirstValue => dataArray[0];
 
         public Node<T> Left { get; set; }
 
@@ -30,11 +30,11 @@ namespace BinaryTree
 
         private int ArrayCount { get; set; }
 
-        private T GetLastElement => dataArray[ArrayCount - 1];
+        private T LastValue => dataArray[ArrayCount - 1];
 
         public void Add(T value)
         {
-            InsertData(this, value);
+            InsertData(value);
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -50,61 +50,86 @@ namespace BinaryTree
             return GetEnumerator();
         }
 
-        public bool IsFull(Node<T> node)
+        public bool IsFull()
         {
-            return node.ArrayCount == node.dataArray.Length;
+            return ArrayCount == dataArray.Length;
         }
 
-        private void InsertData(Node<T> node, T value)
+        public void RemoveData(T value)
         {
-            if (!IsFull(node))
+            foreach (var element in this)
             {
-                InsertElement(node, value);
-                node.ArrayCount++;
-            }
-
-            if (value.CompareTo(node.GetLastElement) >= 0)
-            {
-                if (node.Right == null)
-                {
-                    node.Right = new Node<T>(value, node.ArrayCount);
-                }
-                else
-                {
-                    InsertData(node.Right, value);
-                }
-            }
-            else if (value.CompareTo(Data) < 0)
-            {
-                if (node.Left == null)
-                {
-                    node.Left = new Node<T>(value, node.ArrayCount);
-                }
-                else
-                {
-                    InsertData(node.Left, value);
-                }
+                /*   if (element.Equals(value))
+                   {
+                   }*/
             }
         }
 
-        private void InsertElement(Node<T> node, T value)
+        private void InsertData(T value)
         {
-            for (int i = 0; i < node.ArrayCount; i++)
+            if (!IsFull())
             {
-                if (node.dataArray[i].CompareTo(value) >= 0)
+                InsertElement(value);
+                return;
+            }
+
+            if (value.CompareTo(LastValue) >= 0)
+            {
+                Right = InsertTo(Right, value);
+                return;
+            }
+
+            if (value.CompareTo(FirstValue) <= 0)
+            {
+                Left = InsertTo(Left, value);
+                return;
+            }
+
+            T temp = LastValue;
+            InsertElement(value);
+            Right = InsertTo(Right, temp);
+        }
+
+        private void InsertElement(T value)
+        {
+            for (int i = 0; i < dataArray.Length; i++)
+            {
+                if (dataArray[i].CompareTo(value) > 0)
                 {
-                    ShiftElements(node, i);
+                    ShiftElements(i);
                     dataArray[i] = value;
-                    break;
+                    ArrayCount = Math.Min(ArrayCount + 1, dataArray.Length);
+                    return;
                 }
             }
+
+            if (IsFull())
+            {
+                throw new InvalidOperationException();
+            }
+
+            dataArray[ArrayCount++] = value;
         }
 
-        private void ShiftElements(Node<T> node, int index)
+        private Node<T> InsertTo(Node<T> node, T value)
         {
-            for (int i = index; i < node.ArrayCount; i++)
+            if (node == null)
             {
-                node.dataArray[i + 1] = node.dataArray[i];
+                var newArray = new T[ArrayCount];
+                newArray[0] = value;
+                return new Node<T>(newArray, ArrayCount);
+            }
+
+            node.InsertData(value);
+
+            return node;
+        }
+
+        private void ShiftElements(int index)
+        {
+            for (int i = dataArray.Length - 1; i > index; i--)
+            {
+                dataArray[i] = dataArray[i - 1];
             }
         }
     }
