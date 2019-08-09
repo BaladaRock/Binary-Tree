@@ -326,8 +326,9 @@ namespace BinaryTree
         {
             if (IsLeaf(foundNode))
             {
-                // foundNode.RemoveData(value);
-                RemoveLeafNode(parent, foundNode);
+                foundNode.RemoveData(value);
+
+                // RemoveLeafNode(parent, foundNode);
                 return;
             }
 
