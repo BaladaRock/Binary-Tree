@@ -85,7 +85,7 @@ namespace BinaryTreeFacts
             Assert.Equal(new[] { 0, 2, 2, 3 }, tree.InOrderTraversal());
         }
         [Fact]
-        public void Test_Array_Of_Values_When_Size_Is_1_Add_Method_Should_Work_Correctly()
+        public void Test_Array_Of_Values_When_Size_Is_1()
         {
             //Given, when
             var tree = new BinaryTreeCollection<int>(1)
