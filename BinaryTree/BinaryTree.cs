@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("BinaryTreeFacts")]
 
 namespace BinaryTree
 {
@@ -11,6 +14,7 @@ namespace BinaryTree
 
         public BinaryTreeCollection(int size = 1)
         {
+            Size = size;
             Count = 0;
         }
 
@@ -18,9 +22,13 @@ namespace BinaryTree
 
         public bool IsReadOnly { get; set; }
 
+        public int Size { get; }
+
         public void Add(T item)
         {
-            Node<T> nodeToAdd = new Node<T>(item);
+            var dataArray = new T[Size];
+            dataArray[0] = item;
+            Node<T> nodeToAdd = new Node<T>(dataArray, Size);
             InsertChild(nodeToAdd);
         }
 
@@ -85,13 +93,14 @@ namespace BinaryTree
 
             if (Count == 0)
             {
-                root = new Node<T>(node.Data);
-                Count++;
+                root = node;
             }
             else
             {
-                InsertNode(node, root);
+                root.Add(node.FirstValue);
             }
+
+            Count++;
         }
 
         public IEnumerable<T> PostOrderTraversal()
@@ -121,7 +130,7 @@ namespace BinaryTree
             }
             else
             {
-                RemoveSibling(parent, foundNode);
+                RemoveSibling(parent, foundNode, item);
             }
 
             Count--;
@@ -131,25 +140,21 @@ namespace BinaryTree
         public void RemoveChild(Node<T> node)
         {
             ThrowNull(node);
-            Remove(node.Data);
+            Remove(node.FirstValue);
+        }
+
+        internal Node<T> FindNode(Node<T> rootNode, T item)
+        {
+            var dataArray = new T[Size];
+            dataArray[0] = item;
+            var newNode = new Node<T>(dataArray, Size);
+            return FindNode(rootNode, item, ref newNode);
         }
 
         private bool CheckForOneChild(Node<T> nodeToRemove)
         {
             return (nodeToRemove.Right == null && nodeToRemove.Left != null)
                 || (nodeToRemove.Left == null && nodeToRemove.Right != null);
-        }
-
-        private Node<T> DoInsertion(Node<T> child, Node<T> parent)
-        {
-            if (parent == null)
-            {
-                Count++;
-                return child;
-            }
-
-            InsertNode(child, parent);
-            return parent;
         }
 
         private Node<T> FindLeaf(Node<T> parent)
@@ -173,12 +178,6 @@ namespace BinaryTree
             return GetNodeToSwap(node);
         }
 
-        private Node<T> FindNode(Node<T> rootNode, T item)
-        {
-            var newNode = new Node<T>(root.Data);
-            return FindNode(rootNode, item, ref newNode);
-        }
-
         private Node<T> FindNode(Node<T> rootNode, T item, ref Node<T> parent)
         {
             if (rootNode == null)
@@ -186,12 +185,12 @@ namespace BinaryTree
                 return null;
             }
 
-            if (rootNode.Left?.Data.Equals(item) == true || rootNode.Right?.Data.Equals(item) == true)
+            if (rootNode.Left?.FirstValue.Equals(item) == true || rootNode.Right?.FirstValue.Equals(item) == true)
             {
                 parent = rootNode;
             }
 
-            int result = rootNode.Data.CompareTo(item);
+            int result = rootNode.FirstValue.CompareTo(item);
             if (result == 0)
             {
                 return rootNode;
@@ -224,7 +223,7 @@ namespace BinaryTree
                 }
             }
 
-            foreach (var element in node.GetElements())
+            foreach (var element in node)
             {
                 yield return element;
             }
@@ -240,29 +239,6 @@ namespace BinaryTree
             }
         }
 
-        private void InsertNode(Node<T> child, Node<T> parent)
-        {
-            if (!parent.IsFull())
-            {
-                parent.AddValue(child.Data);
-                return;
-            }
-
-            AddNewNode(child, parent);
-        }
-
-        private void AddNewNode(Node<T> child, Node<T> parent)
-        {
-            if (parent.Data.CompareTo(child.Data) >= 0)
-            {
-                parent.Left = DoInsertion(child, parent.Left);
-            }
-            else
-            {
-                parent.Right = DoInsertion(child, parent.Right);
-            }
-        }
-
         private bool IsLeaf(Node<T> node)
         {
             return node.Right == null && node.Left == null;
@@ -275,14 +251,6 @@ namespace BinaryTree
                 yield break;
             }
 
-            if (node.Left != null)
-            {
-                foreach (var leftNode in PostOrderTraversal(node.Left))
-                {
-                    yield return leftNode;
-                }
-            }
-
             if (node.Right != null)
             {
                 foreach (var rightNode in PostOrderTraversal(node.Right))
@@ -291,9 +259,19 @@ namespace BinaryTree
                 }
             }
 
-            foreach (var element in node.GetElements())
+            foreach (var element in node)
             {
                 yield return element;
+            }
+
+            if (node.Left == null)
+            {
+                yield break;
+            }
+
+            foreach (var leftNode in PostOrderTraversal(node.Left))
+            {
+                yield return leftNode;
             }
         }
 
@@ -304,7 +282,7 @@ namespace BinaryTree
                 yield break;
             }
 
-            foreach (var element in node.GetElements())
+            foreach (var element in node)
             {
                 yield return element;
             }
@@ -322,7 +300,7 @@ namespace BinaryTree
 
         private void RemoveLeafNode(Node<T> parent, Node<T> leaf)
         {
-            if (parent.Data.CompareTo(leaf.Data) >= 0)
+            if (parent.FirstValue.CompareTo(leaf.FirstValue) >= 0)
             {
                 parent.Left = null;
             }
@@ -344,10 +322,11 @@ namespace BinaryTree
             }
         }
 
-        private void RemoveSibling(Node<T> parent, Node<T> foundNode)
+        private void RemoveSibling(Node<T> parent, Node<T> foundNode, T value)
         {
             if (IsLeaf(foundNode))
             {
+                // foundNode.RemoveData(value);
                 RemoveLeafNode(parent, foundNode);
                 return;
             }
