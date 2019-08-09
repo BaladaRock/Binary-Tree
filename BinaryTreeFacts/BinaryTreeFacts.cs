@@ -947,6 +947,7 @@ namespace BinaryTreeFacts
             //Then
             Assert.Empty(tree);
         }
+
         [Fact]
         public void Test_Size_Is_1_Add_Method_after_2_elements_have_been_added()
         {
