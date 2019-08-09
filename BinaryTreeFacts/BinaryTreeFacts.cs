@@ -85,7 +85,7 @@ namespace BinaryTreeFacts
             Assert.Equal(new[] { 0, 2, 2, 3 }, tree.InOrderTraversal());
         }
         [Fact]
-        public void Test_Array_Of_Values_When_Size_Is_1_Add_Method_Should_Work_Correctly()
+        public void Test_Array_Of_Values_When_Size_Is_1()
         {
             //Given, when
             var tree = new BinaryTreeCollection<int>(1)
@@ -961,7 +961,7 @@ namespace BinaryTreeFacts
         }
 
         [Fact]
-        public void Test_Size_Is_2_Add_Method_should_FILL_current_array_before_proceeding()
+        public void Test_Size_Is_2_Add_Method_should_FILL_current_Array_before_proceeding()
         {
             //Given, when
             var tree = new BinaryTreeCollection<int>(2)
@@ -988,7 +988,5 @@ namespace BinaryTreeFacts
             //Then
             Assert.Equal(new[] { 1, 1, 2, 3, 4 }, tree.InOrderTraversal());
         }
-
-
     }
 }
