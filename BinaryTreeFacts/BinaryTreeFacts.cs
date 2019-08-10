@@ -239,23 +239,22 @@ namespace BinaryTreeFacts
         public void Test_FindNode_Check_Parent_And_Child_After_Insertion()
         {
             //Given
-            var tree = new BinaryTreeCollection<int>(3)
-            {
-               5,
-               3,
-               6,
-            };
+            var node = new Node<int>(new int[] { 5, 3, 6 }, 3);
+            var tree = new BinaryTreeCollection<int>(3);
             //When
-            var checkNode = tree.FindNode(new Node<int>(6, 3), 6);
+            tree.InsertChild(node);
+            var checkNode = tree.FindNode(node, 6);
+            var enumerator = checkNode.GetEnumerator();
+            enumerator.MoveNext();
             //Then
-            Assert.NotNull(checkNode);
+            Assert.Equal(5, enumerator.Current);
         }
 
         [Fact]
         public void Test_FindNode_Method_Check_That_Node_Exists()
         {
             //Given
-            var node = new Node<int>(3) { 1 };
+            var node = new Node<int>(new int[] { 1 }, 3);
             var tree = new BinaryTreeCollection<int>(3)
             {
                5,
@@ -265,7 +264,7 @@ namespace BinaryTreeFacts
             //When
             var checkNode = tree.FindNode(node, 3);
             //Then
-            Assert.Equal(node, checkNode);
+            Assert.Null(checkNode);
         }
 
         [Fact]
