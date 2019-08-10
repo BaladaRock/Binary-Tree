@@ -146,7 +146,6 @@ namespace BinaryTree
         internal Node<T> FindNode(Node<T> rootNode, T item)
         {
             var dataArray = new T[Size];
-            dataArray[0] = item;
             var newNode = new Node<T>(dataArray, Size);
             return FindNode(rootNode, item, ref newNode);
         }
