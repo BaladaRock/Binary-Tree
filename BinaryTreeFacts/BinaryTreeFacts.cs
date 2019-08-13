@@ -24,19 +24,6 @@ namespace BinaryTreeFacts
         }
 
         [Fact]
-        public void Test_AddMethod_Check_Node_After_Inserting_More_Elements_Then_Size()
-        {
-            //Given
-            var tree = new BinaryTreeCollection<int>();
-            var node = new Node<int>(new[] { 1, 2, 3 }, 3);
-            //When
-            tree.InsertChild(node);
-            tree.Add(3);
-            //Then
-            Assert.NotNull(tree.FindNode(new Node<int>(3, 3), 3));
-        }
-
-        [Fact]
         public void Test_AddMethod_For_Edge_Case_When_Size_Is_2()
         {
             //Given
@@ -223,49 +210,23 @@ namespace BinaryTreeFacts
         public void Test_Count_Property_After_Multiple_Insertions()
         {
             //Given
-            var tree = new BinaryTreeCollection<int>();
-            //When
-            tree.InsertChild(new Node<int>(4));
-            tree.InsertChild(new Node<int>(2));
-            tree.InsertChild(new Node<int>(1));
-            tree.InsertChild(new Node<int>(4));
-            tree.InsertChild(new Node<int>(5));
-            tree.InsertChild(new Node<int>(6));
+            var tree = new BinaryTreeCollection<int>() { 4, 2, 1, 4, 5, 6 };
+
             //Then
             Assert.Equal(6, tree.Count);
         }
 
         [Fact]
-        public void Test_FindNode_Check_Parent_And_Child_After_Insertion()
+        public void Test_FindNode_Check_That_Node_Is_Found_When_Last_Element_Is_Called()
         {
             //Given
-            var node = new Node<int>(new int[] { 5, 3, 6 }, 3);
-            var tree = new BinaryTreeCollection<int>(3);
+            var tree = new BinaryTreeCollection<int>(3) { 3, 5, 6 };
             //When
-            tree.InsertChild(node);
-            var checkNode = tree.FindNode(node, 6);
-            var enumerator = checkNode.GetEnumerator();
-            enumerator.MoveNext();
+            var checkNode = tree.FindNode(6);
             //Then
-            Assert.Equal(5, enumerator.Current);
+            Assert.Equal(new[] { 3, 5, 6 }, checkNode);
         }
 
-        [Fact]
-        public void Test_FindNode_Method_Check_That_Node_Exists()
-        {
-            //Given
-            var node = new Node<int>(new int[] { 1 }, 3);
-            var tree = new BinaryTreeCollection<int>(3)
-            {
-               5,
-               3,
-               6,
-            };
-            //When
-            var checkNode = tree.FindNode(node, 3);
-            //Then
-            Assert.Null(checkNode);
-        }
 
         [Fact]
         public void Test_GetEnumerator_Empty_Tree()
@@ -282,35 +243,9 @@ namespace BinaryTreeFacts
         public void Test_GetEnumerator_Root_Has_2_Children()
         {
             //Given
-            var tree = new BinaryTreeCollection<int>();
-            //When
-            tree.InsertChild(new Node<int>(4));
-            tree.InsertChild(new Node<int>(2));
-            tree.InsertChild(new Node<int>(5));
-            var enumerator = tree.GetEnumerator();
-            enumerator.MoveNext();
+            var tree = new BinaryTreeCollection<int>() { 4, 2, 5 };
             //Then
-            Assert.Equal(2, enumerator.Current);
-            enumerator.MoveNext();
-            Assert.Equal(4, enumerator.Current);
-            enumerator.MoveNext();
-            Assert.Equal(5, enumerator.Current);
-            enumerator.MoveNext();
-            Assert.False(enumerator.MoveNext());
-        }
-
-        [Fact]
-        public void Test_GetEnumerator_Tree_Has_1_Node()
-        {
-            //Given
-            var tree = new BinaryTreeCollection<int>();
-            //When
-            tree.InsertChild(new Node<int>(4));
-            var enumerator = tree.GetEnumerator();
-            //Then
-            Assert.True(enumerator.MoveNext());
-            Assert.Equal(4, enumerator.Current);
-            Assert.False(enumerator.MoveNext());
+            Assert.Equal(new[] { 2, 4, 5 }, tree);
         }
 
         [Fact]
@@ -340,10 +275,9 @@ namespace BinaryTreeFacts
         public void Test_InOrderTraversal_Root_Has_1_Left_Child()
         {
             //Given
-            var tree = new BinaryTreeCollection<int>();
+            var tree = new BinaryTreeCollection<int>() { 4 };
             //When
-            tree.InsertChild(new Node<int>(4));
-            tree.InsertChild(new Node<int>(2));
+            tree.Add(2);
             //Then
             Assert.Equal(new[] { 2, 4 }, tree.InOrderTraversal());
         }
@@ -352,10 +286,9 @@ namespace BinaryTreeFacts
         public void Test_InOrderTraversal_Root_Has_1_Right_Child()
         {
             //Given
-            var tree = new BinaryTreeCollection<int>();
+            var tree = new BinaryTreeCollection<int>() { 4 };
             //When
-            tree.InsertChild(new Node<int>(4));
-            tree.InsertChild(new Node<int>(6));
+            tree.Add(6);
             //Then
             Assert.Equal(new[] { 4, 6 }, tree.InOrderTraversal());
         }
@@ -364,11 +297,10 @@ namespace BinaryTreeFacts
         public void Test_InOrderTraversal_Root_Has_2_Children()
         {
             //Given
-            var tree = new BinaryTreeCollection<int>();
+            var tree = new BinaryTreeCollection<int>() { 4 };
             //When
-            tree.InsertChild(new Node<int>(4));
-            tree.InsertChild(new Node<int>(2));
-            tree.InsertChild(new Node<int>(5));
+            tree.Add(2);
+            tree.Add(5);
             //Then
             Assert.Equal(new[] { 2, 4, 5 }, tree.InOrderTraversal());
         }
@@ -399,7 +331,7 @@ namespace BinaryTreeFacts
             //Given
             var tree = new BinaryTreeCollection<int>();
             //When
-            tree.InsertChild(new Node<int>(4));
+            tree.Add(4);
             //Then
             Assert.Equal(new[] { 4 }, tree.InOrderTraversal());
         }
@@ -410,9 +342,9 @@ namespace BinaryTreeFacts
             //Given
             var tree = new BinaryTreeCollection<int>();
             //When
-            tree.InsertChild(new Node<int>(4));
+            tree.Add(4);
             tree.Add(3);
-            tree.InsertChild(new Node<int>(2));
+            tree.Add(2);
             tree.Add(0);
             tree.Add(-1);
             tree.Add(2);
@@ -456,9 +388,9 @@ namespace BinaryTreeFacts
             //Given
             var tree = new BinaryTreeCollection<int>();
             //When
-            tree.InsertChild(new Node<int>(4));
-            tree.InsertChild(new Node<int>(2));
-            tree.InsertChild(new Node<int>(5));
+            tree.Add(4);
+            tree.Add(2);
+            tree.Add(5);
             //Then
             Assert.Equal(new[] { 4, 2, 5 }, tree.PreOrderTraversal());
         }
@@ -469,12 +401,12 @@ namespace BinaryTreeFacts
             //Given
             var tree = new BinaryTreeCollection<int>();
             //When
-            tree.InsertChild(new Node<int>(10));
-            tree.InsertChild(new Node<int>(9));
-            tree.InsertChild(new Node<int>(8));
-            tree.InsertChild(new Node<int>(7));
-            tree.InsertChild(new Node<int>(6));
-            tree.InsertChild(new Node<int>(5));
+            tree.Add(10);
+            tree.Add(9);
+            tree.Add(8);
+            tree.Add(7);
+            tree.Add(6);
+            tree.Add(5);
             //Then
             Assert.Equal(new[] { 5, 6, 7, 8, 9, 10 }, tree.InOrderTraversal());
             Assert.Equal(6, tree.Count);
@@ -486,12 +418,12 @@ namespace BinaryTreeFacts
             //Given
             var tree = new BinaryTreeCollection<int>();
             //When
-            tree.InsertChild(new Node<int>(1));
-            tree.InsertChild(new Node<int>(2));
-            tree.InsertChild(new Node<int>(3));
-            tree.InsertChild(new Node<int>(4));
-            tree.InsertChild(new Node<int>(5));
-            tree.InsertChild(new Node<int>(6));
+            tree.Add(1);
+            tree.Add(2);
+            tree.Add(3);
+            tree.Add(4);
+            tree.Add(5);
+            tree.Add(6);
             //Then
             Assert.Equal(new[] { 1, 2, 3, 4, 5, 6 }, tree.InOrderTraversal());
             Assert.Equal(6, tree.Count);
@@ -503,12 +435,12 @@ namespace BinaryTreeFacts
             //Given
             var tree = new BinaryTreeCollection<int>();
             //When
-            tree.InsertChild(new Node<int>(4));
-            tree.InsertChild(new Node<int>(2));
-            tree.InsertChild(new Node<int>(1));
-            tree.InsertChild(new Node<int>(4));
-            tree.InsertChild(new Node<int>(5));
-            tree.InsertChild(new Node<int>(6));
+            tree.Add(4);
+            tree.Add(2);
+            tree.Add(1);
+            tree.Add(4);
+            tree.Add(5);
+            tree.Add(6);
             //Then
             Assert.Equal(new[] { 1, 2, 4, 4, 5, 6 }, tree.InOrderTraversal());
             Assert.Equal(6, tree.Count);
@@ -528,8 +460,8 @@ namespace BinaryTreeFacts
             //Given
             var tree = new BinaryTreeCollection<int>();
             //When
-            tree.InsertChild(new Node<int>(4));
-            tree.InsertChild(new Node<int>(2));
+            tree.Add(4);
+            tree.Add(2);
             //Then
             Assert.Equal(new[] { 4, 2 }, tree.PostOrderTraversal());
         }
@@ -540,8 +472,8 @@ namespace BinaryTreeFacts
             //Given
             var tree = new BinaryTreeCollection<int>();
             //When
-            tree.InsertChild(new Node<int>(4));
-            tree.InsertChild(new Node<int>(6));
+            tree.Add(4);
+            tree.Add(6);
             //Then
             Assert.Equal(new[] { 6, 4 }, tree.PostOrderTraversal());
         }
@@ -552,9 +484,9 @@ namespace BinaryTreeFacts
             //Given
             var tree = new BinaryTreeCollection<int>();
             //When
-            tree.InsertChild(new Node<int>(4));
-            tree.InsertChild(new Node<int>(2));
-            tree.InsertChild(new Node<int>(5));
+            tree.Add(4);
+            tree.Add(2);
+            tree.Add(5);
             //Then
             Assert.Equal(new[] { 5, 4, 2 }, tree.PostOrderTraversal());
         }
@@ -565,7 +497,7 @@ namespace BinaryTreeFacts
             //Given
             var tree = new BinaryTreeCollection<int>();
             //When
-            tree.InsertChild(new Node<int>(4));
+            tree.Add(4);
             //Then
             Assert.Equal(new[] { 4 }, tree.PostOrderTraversal());
         }
@@ -585,8 +517,8 @@ namespace BinaryTreeFacts
             //Given
             var tree = new BinaryTreeCollection<int>();
             //When
-            tree.InsertChild(new Node<int>(4));
-            tree.InsertChild(new Node<int>(2));
+            tree.Add(4);
+            tree.Add(2);
             //Then
             Assert.Equal(new[] { 4, 2 }, tree.PreOrderTraversal());
         }
@@ -597,7 +529,7 @@ namespace BinaryTreeFacts
             //Given
             var tree = new BinaryTreeCollection<int>();
             //When
-            tree.InsertChild(new Node<int>(4));
+            tree.Add(4);
             //Then
             Assert.Equal(new[] { 4 }, tree.PreOrderTraversal());
         }
@@ -636,7 +568,27 @@ namespace BinaryTreeFacts
         }
 
         [Fact]
-        public void Test_Remove_Should_Correctly_Work_When_Element_Is_Leaf()
+        public void Test_Remove_Node_Is_Leaf_Check_That_Parent_Child_Is_Null()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>()
+            {
+               3,
+               5,
+               6,
+               7,
+               8,
+               9
+            };
+            //When
+            tree.Remove(9);
+            Node<int> foundNode = tree.FindNode(8);
+            //Then
+            Assert.Null(foundNode.Right);
+        }
+
+        [Fact]
+        public void Test_Remove_Node_Is_Leaf_Parent_should_have_SAME_CHILD()
         {
             //Given
             var tree = new BinaryTreeCollection<int>(3)
@@ -650,8 +602,88 @@ namespace BinaryTreeFacts
             };
             //When
             tree.Remove(9);
+            Node<int> foundNode = tree.FindNode(5);
+            //Then
+            Assert.Equal(new[] { 7, 8 }, foundNode.Right);
+        }
+
+        [Fact]
+        public void Test_Remove_Should_Correctly_Work_When_Element_Is_Leaf()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>()
+            {
+               3,
+               5,
+               6,
+               7,
+               8,
+               9
+            };
+            //When
+            tree.Remove(9);
             //Then
             Assert.Equal(new[] { 3, 5, 6, 7, 8 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_Remove__Element_Is_Leaf_Should_correctly_remove_FIRST_element()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>(3)
+            {
+               3,
+               5,
+               6,
+               7,
+               8,
+               9
+            };
+            //When
+            tree.Remove(7);
+            //Then
+            Assert.Equal(new[] { 3, 5, 6, 8, 9 }, tree.InOrderTraversal());
+            Assert.Equal(5, tree.Count);
+        }
+
+        [Fact]
+        public void Test_Remove__Element_Is_Leaf_Should_correctly_remove_Middle_element()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>(3)
+            {
+               3,
+               5,
+               6,
+               7,
+               8,
+               9
+            };
+            //When
+            tree.Remove(8);
+            //Then
+            Assert.Equal(new[] { 3, 5, 6, 7, 9 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_Remove__Element_Is_Leaf_Should_Use_Empty_Spaces_At_Next_Addition()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>(3)
+            {
+               3,
+               5,
+               6,
+               7,
+               8,
+               9
+            };
+            //When
+            tree.Remove(8);
+            tree.Add(8);
+            Node<int> foundNode = tree.FindNode(8);
+            //Then
+            Assert.Equal(new[] { 7, 8, 9 }, foundNode);
         }
 
         public void Test_RemoveChild_another_edge_case()
@@ -791,25 +823,6 @@ namespace BinaryTreeFacts
             //Then
             Assert.True(tree.Remove(3));
             Assert.Equal(new[] { 1, 2 }, tree.InOrderTraversal());
-        }
-
-        [Fact]
-        public void Test_RemoveChild_Method_Should_Return_FALSE_When_Tree_Does_Not_Contain_Given_Node()
-        {
-            //Given
-            var tree = new BinaryTreeCollection<int>
-            {
-                5,
-                3,
-                2,
-                6,
-                5
-            };
-            //When
-            var removedElement = new Node<int>(7);
-            tree.RemoveChild(removedElement);
-            //Then
-            Assert.Equal(new[] { 2, 3, 5, 5, 6 }, tree.InOrderTraversal());
         }
 
         [Fact]
