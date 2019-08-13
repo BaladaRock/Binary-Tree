@@ -10,19 +10,17 @@ namespace BinaryTree
         private readonly T[] dataArray;
 
         public Node(T data, int arraySize = 1)
-            : this(new[] { data }, arraySize)
-        {
-        }
-
-        public Node(T[] dataArray, int arraySize = 1)
         {
             Left = null;
             Right = null;
-            this.dataArray = dataArray;
+            dataArray = new T[arraySize];
+            dataArray[0] = data;
             ArrayCount = 1;
         }
 
         public T FirstValue => dataArray[0];
+
+        public T LastValue => dataArray[ArrayCount - 1];
 
         public Node<T> Left { get; set; }
 
@@ -30,11 +28,22 @@ namespace BinaryTree
 
         private int ArrayCount { get; set; }
 
-        private T LastValue => dataArray[ArrayCount - 1];
-
         public void Add(T value)
         {
             InsertData(value);
+        }
+
+        public bool Contains(T item)
+        {
+            foreach (var element in this)
+            {
+                if (element.Equals(item))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -57,14 +66,15 @@ namespace BinaryTree
 
         public void RemoveData(T value)
         {
-            foreach (var element in this)
+            for (int i = 0; i < ArrayCount; i++)
             {
-                /*   if (element.Equals(value))
-                   {
-
-
-                   }*/
+                if (dataArray[i].Equals(value))
+                {
+                    ShiftLeft(i);
+                }
             }
+
+            ArrayCount--;
         }
 
         private void InsertData(T value)
@@ -98,7 +108,7 @@ namespace BinaryTree
             {
                 if (dataArray[i].CompareTo(value) > 0)
                 {
-                    ShiftElements(i);
+                    ShiftRight(i);
                     dataArray[i] = value;
                     ArrayCount = Math.Min(ArrayCount + 1, dataArray.Length);
                     return;
@@ -117,9 +127,7 @@ namespace BinaryTree
         {
             if (node == null)
             {
-                var newArray = new T[ArrayCount];
-                newArray[0] = value;
-                return new Node<T>(newArray, ArrayCount);
+                return new Node<T>(value, ArrayCount);
             }
 
             node.InsertData(value);
@@ -127,7 +135,15 @@ namespace BinaryTree
             return node;
         }
 
-        private void ShiftElements(int index)
+        private void ShiftLeft(int startingIndex)
+        {
+            for (int i = startingIndex; i < ArrayCount - 1; i++)
+            {
+                dataArray[i] = dataArray[i + 1];
+            }
+        }
+
+        private void ShiftRight(int index)
         {
             for (int i = dataArray.Length - 1; i > index; i--)
             {

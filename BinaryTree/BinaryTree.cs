@@ -26,10 +26,16 @@ namespace BinaryTree
 
         public void Add(T item)
         {
-            var dataArray = new T[Size];
-            dataArray[0] = item;
-            Node<T> nodeToAdd = new Node<T>(dataArray, Size);
-            InsertChild(nodeToAdd);
+            if (Count == 0)
+            {
+                root = new Node<T>(item, Size);
+            }
+            else
+            {
+                root.Add(item);
+            }
+
+            Count++;
         }
 
         public BinaryTreeCollection<T> AsReadOnly()
@@ -54,7 +60,7 @@ namespace BinaryTree
 
         public bool Contains(T item)
         {
-            return FindNode(root, item) != null;
+            return FindNode(item) != null;
         }
 
         public void CopyTo(T[] array, int arrayIndex)
@@ -85,22 +91,6 @@ namespace BinaryTree
         public IEnumerable<T> InOrderTraversal()
         {
             return InOrderTraversal(root);
-        }
-
-        public void InsertChild(Node<T> node)
-        {
-            ThrowInsertExceptions(node);
-
-            if (Count == 0)
-            {
-                root = node;
-            }
-            else
-            {
-                root.Add(node.FirstValue);
-            }
-
-            Count++;
         }
 
         public IEnumerable<T> PostOrderTraversal()
@@ -137,17 +127,10 @@ namespace BinaryTree
             return true;
         }
 
-        public void RemoveChild(Node<T> node)
+        internal Node<T> FindNode(T item)
         {
-            ThrowNull(node);
-            Remove(node.FirstValue);
-        }
-
-        internal Node<T> FindNode(Node<T> rootNode, T item)
-        {
-            var dataArray = new T[Size];
-            var newNode = new Node<T>(dataArray, Size);
-            return FindNode(rootNode, item, ref newNode);
+            Node<T> dummy = null;
+            return FindNode(root, item, ref dummy);
         }
 
         private bool CheckForOneChild(Node<T> nodeToRemove)
@@ -184,22 +167,24 @@ namespace BinaryTree
                 return null;
             }
 
-            if (rootNode.Left?.FirstValue.Equals(item) == true || rootNode.Right?.FirstValue.Equals(item) == true)
-            {
-                parent = rootNode;
-            }
-
-            int result = rootNode.FirstValue.CompareTo(item);
-            if (result == 0)
+            if (rootNode.Contains(item))
             {
                 return rootNode;
             }
 
             parent = rootNode;
 
-            return result > 0
-                ? FindNode(rootNode.Left, item, ref parent)
-                : FindNode(rootNode.Right, item, ref parent);
+            if (item.CompareTo(rootNode.FirstValue) < 0)
+            {
+                return FindNode(rootNode.Left, item, ref parent);
+            }
+
+            if (item.CompareTo(rootNode.LastValue) >= 0)
+            {
+                return FindNode(rootNode.Right, item, ref parent);
+            }
+
+            return null;
         }
 
         private Node<T> GetNodeToSwap(Node<T> foundNode)
@@ -327,7 +312,11 @@ namespace BinaryTree
             {
                 foundNode.RemoveData(value);
 
-                // RemoveLeafNode(parent, foundNode);
+                if (Size == 1)
+                {
+                    RemoveLeafNode(parent, foundNode);
+                }
+
                 return;
             }
 
