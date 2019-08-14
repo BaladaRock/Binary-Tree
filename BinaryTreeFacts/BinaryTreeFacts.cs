@@ -842,6 +842,7 @@ namespace BinaryTreeFacts
             Assert.True(tree.Remove(node.FirstValue));
             Assert.Equal(new[] { 2, 5, 5, 6 }, tree.InOrderTraversal());
         }
+
         [Fact]
         public void Test_RemoveChild_Method_Should_Work_Correctly_When_Node_Has_1_Child()
         {
@@ -958,6 +959,73 @@ namespace BinaryTreeFacts
             Assert.True(tree.Remove(4));
             //Then
             Assert.Empty(tree);
+        }
+
+        [Fact]
+        public void Test_Remove__Element_Has_One_Right_Child_Should_correctly_remove_LAST_element()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>(2)
+            {
+               0,
+               1,
+               2,
+               3,
+               4,
+               5,
+            };
+            //When
+            tree.Remove(3);
+            //Then
+            Assert.Equal(new[] { 0, 1, 2, 4, 5 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_Remove__Element_Has_More_Right_Children_Should_correctly_remove_MIDDLE_element()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>(3) { 0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11
+            };
+            //When
+            tree.Remove(4);
+            //Then
+            Assert.Equal(new[] { 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11 }, tree.InOrderTraversal());
+        }
+
+        [Fact]
+        public void Test_Remove__Element_Has_More_Left_Children_Should_correctly_remove_FIRST_element()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>(3) { 0,
+                1,
+                2,
+                -11,
+                -10,
+                -9,
+                -8,
+                -7,
+                -6,
+                -5,
+                -4,
+                -3,
+                -2,
+                -1
+            };
+            //When
+            tree.Remove(-3);
+            //Then
+            Assert.Equal(new[] { -11, -10, -9, -8, -7, -6, -5, -4, -2, -1, 0, 1, 2 }, tree.InOrderTraversal());
         }
 
         [Fact]
