@@ -71,10 +71,19 @@ namespace BinaryTree
                 if (dataArray[i].Equals(value))
                 {
                     ShiftLeft(i);
+                    ArrayCount--;
+                    return;
                 }
             }
+        }
 
-            ArrayCount--;
+        internal void SwapElement(Node<T> child, T value)
+        {
+            RemoveData(value);
+            T swappedValue = child.FirstValue;
+            dataArray[ArrayCount] = swappedValue;
+            child.RemoveData(swappedValue);
+            ArrayCount++;
         }
 
         private void InsertData(T value)

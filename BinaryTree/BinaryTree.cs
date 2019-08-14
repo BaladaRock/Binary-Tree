@@ -322,15 +322,7 @@ namespace BinaryTree
 
             if (CheckForOneChild(foundNode))
             {
-                if (parent.Right == foundNode)
-                {
-                    parent.Right = GetNodeToSwap(foundNode);
-                }
-                else
-                {
-                    parent.Left = GetNodeToSwap(foundNode);
-                }
-
+                foundNode.SwapElement(foundNode.Left ?? foundNode.Right, value);
                 return;
             }
 
