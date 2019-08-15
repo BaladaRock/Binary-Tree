@@ -955,6 +955,20 @@ namespace BinaryTreeFacts
         }
 
         [Fact]
+        public void Test_Remove_When_Node_IS_ROOT_And_Is_Not_Full()
+        {
+            //Given
+            var tree = new BinaryTreeCollection<int>(5)
+            {
+               1,
+            };
+            //When
+            tree.Remove(1);
+            //Then
+            Assert.Empty(tree);
+        }
+
+        [Fact]
         public void Test_RemoveChild_Method_Remove_LEAF_When_Tree_Has_3_Nodes()
         {
             //Given
