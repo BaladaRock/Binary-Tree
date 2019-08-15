@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("BinaryTreeFacts")]
@@ -26,6 +27,8 @@ namespace BinaryTree
 
         public void Add(T item)
         {
+            ThrowDuplicateException(item);
+
             if (Count == 0)
             {
                 root = new Node<T>(item, Size);
@@ -114,13 +117,13 @@ namespace BinaryTree
                 return false;
             }
 
-            if (parent == null)
+            if (parent == null && Size == 1)
             {
                 RemoveRoot(foundNode);
             }
             else
             {
-                RemoveSibling(parent, foundNode, item);
+                RemoveItem(parent, foundNode, item);
             }
 
             Count--;
@@ -133,16 +136,10 @@ namespace BinaryTree
             return FindNode(root, item, ref dummy);
         }
 
-        private bool CheckForOneChild(Node<T> nodeToRemove)
-        {
-            return (nodeToRemove.Right == null && nodeToRemove.Left != null)
-                || (nodeToRemove.Left == null && nodeToRemove.Right != null);
-        }
-
         private Node<T> FindLeaf(Node<T> parent)
         {
             var newNode = GetNodeToSwap(parent);
-            if (IsLeaf(newNode))
+            if (newNode.IsLeaf())
             {
                 return newNode;
             }
@@ -152,7 +149,7 @@ namespace BinaryTree
 
         private Node<T> FindNewRoot(Node<T> node)
         {
-            if (IsLeaf(node) || CheckForOneChild(node))
+            if (node.IsLeaf() || node.HasOneChild())
             {
                 return node;
             }
@@ -185,6 +182,26 @@ namespace BinaryTree
             }
 
             return null;
+        }
+
+        private T FindValueToReplace(Node<T> foundNode)
+        {
+            if (foundNode.Left == null)
+            {
+                return GetMinValue(foundNode.Right);
+            }
+
+            return GetMaxValue(foundNode.Left);
+        }
+
+        private T GetMaxValue(Node<T> node)
+        {
+            return PostOrderTraversal(node).First();
+        }
+
+        private T GetMinValue(Node<T> node)
+        {
+            return InOrderTraversal(node).First();
         }
 
         private Node<T> GetNodeToSwap(Node<T> foundNode)
@@ -223,11 +240,6 @@ namespace BinaryTree
             }
         }
 
-        private bool IsLeaf(Node<T> node)
-        {
-            return node.Right == null && node.Left == null;
-        }
-
         private IEnumerable<T> PostOrderTraversal(Node<T> node)
         {
             if (node == null)
@@ -243,7 +255,7 @@ namespace BinaryTree
                 }
             }
 
-            foreach (var element in node)
+            foreach (var element in node.GetPostOrderEnumerator())
             {
                 yield return element;
             }
@@ -282,6 +294,25 @@ namespace BinaryTree
             }
         }
 
+        private void RemoveItem(Node<T> parent, Node<T> foundNode, T value)
+        {
+            if (foundNode.IsLeaf())
+            {
+                if (Size == 1)
+                {
+                    RemoveLeafNode(parent, foundNode);
+                }
+
+                foundNode.RemoveData(value);
+                return;
+            }
+
+            var valueToReplace = FindValueToReplace(foundNode);
+            Remove(valueToReplace);
+
+            foundNode.MoveElement(valueToReplace, value);
+        }
+
         private void RemoveLeafNode(Node<T> parent, Node<T> leaf)
         {
             if (parent.FirstValue.CompareTo(leaf.FirstValue) >= 0)
@@ -306,32 +337,9 @@ namespace BinaryTree
             }
         }
 
-        private void RemoveSibling(Node<T> parent, Node<T> foundNode, T value)
-        {
-            if (IsLeaf(foundNode))
-            {
-                foundNode.RemoveData(value);
-
-                if (Size == 1)
-                {
-                    RemoveLeafNode(parent, foundNode);
-                }
-
-                return;
-            }
-
-            if (CheckForOneChild(foundNode))
-            {
-                foundNode.SwapElement(foundNode.Left ?? foundNode.Right, value);
-                return;
-            }
-
-            SwapWithChild(parent, foundNode);
-        }
-
         private void SwapRootNode(Node<T> rootNode)
         {
-            if (CheckForOneChild(root))
+            if (root.HasOneChild())
             {
                 root = root.Left ?? root.Right;
             }
@@ -340,21 +348,6 @@ namespace BinaryTree
                 Node<T> newRoot = FindNewRoot(root.Right);
                 newRoot.Left = root.Left;
                 root = root.Right;
-            }
-        }
-
-        private void SwapWithChild(Node<T> parent, Node<T> child)
-        {
-            Node<T> newNode = FindLeaf(child.Right);
-            newNode.Left = child.Left;
-
-            if (parent.Right == child)
-            {
-                parent.Right = child.Right;
-            }
-            else
-            {
-                parent.Left = child.Right;
             }
         }
 
@@ -373,6 +366,16 @@ namespace BinaryTree
             ThrowNull(array);
             ThrowIndexException(arrayIndex);
             ThrowArgumentException(array, arrayIndex);
+        }
+
+        private void ThrowDuplicateException(T item)
+        {
+            if (!Contains(item))
+            {
+                return;
+            }
+
+            throw new InvalidOperationException(message: "Tree cannot contain duplicates! ");
         }
 
         private void ThrowIndexException(int arrayIndex)

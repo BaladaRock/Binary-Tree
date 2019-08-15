@@ -59,9 +59,28 @@ namespace BinaryTree
             return GetEnumerator();
         }
 
+        public IEnumerable<T> GetPostOrderEnumerator()
+        {
+            for (int i = ArrayCount - 1; i >= 0; i--)
+            {
+                yield return dataArray[i];
+            }
+        }
+
+        public bool HasOneChild()
+        {
+            return (Right == null && Left != null)
+                || (Left == null && Right != null);
+        }
+
         public bool IsFull()
         {
             return ArrayCount == dataArray.Length;
+        }
+
+        public bool IsLeaf()
+        {
+            return Right == null && Left == null;
         }
 
         public void RemoveData(T value)
@@ -77,13 +96,10 @@ namespace BinaryTree
             }
         }
 
-        internal void SwapElement(Node<T> child, T value)
+        internal void MoveElement(T leafItem, T value)
         {
             RemoveData(value);
-            T swappedValue = child.FirstValue;
-            dataArray[ArrayCount] = swappedValue;
-            child.RemoveData(swappedValue);
-            ArrayCount++;
+            Add(leafItem);
         }
 
         private void InsertData(T value)
