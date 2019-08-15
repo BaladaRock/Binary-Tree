@@ -83,6 +83,18 @@ namespace BinaryTree
             return Right == null && Left == null;
         }
 
+        public void RemoveChild(Node<T> childNode)
+        {
+            if (Left == childNode)
+            {
+                Left = null;
+            }
+            else if (Right == childNode)
+            {
+                Right = null;
+            }
+        }
+
         public void RemoveData(T value)
         {
             for (int i = 0; i < ArrayCount; i++)
@@ -96,10 +108,15 @@ namespace BinaryTree
             }
         }
 
-        internal void MoveElement(T leafItem, T value)
+        internal bool IsEmpty()
         {
-            RemoveData(value);
-            Add(leafItem);
+            return ArrayCount == 0;
+        }
+
+        internal void ReplaceValue(T newValue, T oldValue)
+        {
+            RemoveData(oldValue);
+            Add(newValue);
         }
 
         private void InsertData(T value)

@@ -117,16 +117,9 @@ namespace BinaryTree
                 return false;
             }
 
-            if (parent == null && Size == 1)
-            {
-                RemoveRoot(foundNode);
-            }
-            else
-            {
-                RemoveItem(parent, foundNode, item);
-            }
-
+            RemoveItem(parent, foundNode, item);
             Count--;
+
             return true;
         }
 
@@ -136,29 +129,8 @@ namespace BinaryTree
             return FindNode(root, item, ref dummy);
         }
 
-        private Node<T> FindLeaf(Node<T> parent)
-        {
-            var newNode = GetNodeToSwap(parent);
-            if (newNode.IsLeaf())
-            {
-                return newNode;
-            }
-
-            return FindLeaf(newNode.Left ?? newNode.Right);
-        }
-
-        private Node<T> FindNewRoot(Node<T> node)
-        {
-            if (node.IsLeaf() || node.HasOneChild())
-            {
-                return node;
-            }
-
-            return GetNodeToSwap(node);
-        }
-
         private Node<T> FindNode(Node<T> rootNode, T item, ref Node<T> parent)
-        {
+            {
             if (rootNode == null)
             {
                 return null;
@@ -176,22 +148,19 @@ namespace BinaryTree
                 return FindNode(rootNode.Left, item, ref parent);
             }
 
-            if (item.CompareTo(rootNode.LastValue) >= 0)
+            if (item.CompareTo(rootNode.LastValue) < 0)
             {
-                return FindNode(rootNode.Right, item, ref parent);
+                return null;
             }
 
-            return null;
+            return FindNode(rootNode.Right, item, ref parent);
         }
 
         private T FindValueToReplace(Node<T> foundNode)
         {
-            if (foundNode.Left == null)
-            {
-                return GetMinValue(foundNode.Right);
-            }
-
-            return GetMaxValue(foundNode.Left);
+            return foundNode.Left == null
+                ? GetMinValue(foundNode.Right)
+                : GetMaxValue(foundNode.Left);
         }
 
         private T GetMaxValue(Node<T> node)
@@ -204,151 +173,61 @@ namespace BinaryTree
             return InOrderTraversal(node).First();
         }
 
-        private Node<T> GetNodeToSwap(Node<T> foundNode)
-        {
-            return foundNode.Left ?? foundNode.Right ?? foundNode;
-        }
-
         private IEnumerable<T> InOrderTraversal(Node<T> node)
         {
-            if (node == null)
-            {
-                yield break;
-            }
-
-            if (node.Left != null)
-            {
-                foreach (var leftNode in InOrderTraversal(node.Left))
-                {
-                    yield return leftNode;
-                }
-            }
-
-            foreach (var element in node)
-            {
-                yield return element;
-            }
-
-            if (node.Right == null)
-            {
-                yield break;
-            }
-
-            foreach (var rightNode in InOrderTraversal(node.Right))
-            {
-                yield return rightNode;
-            }
+            return node == null
+                ? Enumerable.Empty<T>()
+                : InOrderTraversal(node.Left)
+                    .Concat(node)
+                    .Concat(InOrderTraversal(node.Right));
         }
 
         private IEnumerable<T> PostOrderTraversal(Node<T> node)
         {
-            if (node == null)
-            {
-                yield break;
-            }
-
-            if (node.Right != null)
-            {
-                foreach (var rightNode in PostOrderTraversal(node.Right))
-                {
-                    yield return rightNode;
-                }
-            }
-
-            foreach (var element in node.GetPostOrderEnumerator())
-            {
-                yield return element;
-            }
-
-            if (node.Left == null)
-            {
-                yield break;
-            }
-
-            foreach (var leftNode in PostOrderTraversal(node.Left))
-            {
-                yield return leftNode;
-            }
+            return node == null
+                ? Enumerable.Empty<T>()
+                : PostOrderTraversal(node.Right)
+                    .Concat(node.GetPostOrderEnumerator())
+                    .Concat(PostOrderTraversal(node.Left));
         }
 
         private IEnumerable<T> PreOrderTraversal(Node<T> node)
         {
-            if (node == null)
-            {
-                yield break;
-            }
-
-            foreach (var element in node)
-            {
-                yield return element;
-            }
-
-            foreach (T leftNode in PreOrderTraversal(node.Left))
-            {
-                yield return leftNode;
-            }
-
-            foreach (T rightNode in PreOrderTraversal(node.Right))
-            {
-                yield return rightNode;
-            }
+            return node == null
+               ? Enumerable.Empty<T>()
+               : node
+                   .Concat(PreOrderTraversal(node.Left))
+                   .Concat(PreOrderTraversal(node.Right));
         }
 
         private void RemoveItem(Node<T> parent, Node<T> foundNode, T value)
         {
             if (foundNode.IsLeaf())
             {
-                if (Size == 1)
+                foundNode.RemoveData(value);
+                if (foundNode.IsEmpty())
                 {
-                    RemoveLeafNode(parent, foundNode);
+                    RemoveChildNode(parent, foundNode);
                 }
 
-                foundNode.RemoveData(value);
                 return;
             }
 
             var valueToReplace = FindValueToReplace(foundNode);
             Remove(valueToReplace);
 
-            foundNode.MoveElement(valueToReplace, value);
+            foundNode.ReplaceValue(valueToReplace, value);
         }
 
-        private void RemoveLeafNode(Node<T> parent, Node<T> leaf)
+        private void RemoveChildNode(Node<T> parent, Node<T> childNode)
         {
-            if (parent.FirstValue.CompareTo(leaf.FirstValue) >= 0)
-            {
-                parent.Left = null;
-            }
-            else
-            {
-                parent.Right = null;
-            }
-        }
-
-        private void RemoveRoot(Node<T> rootNode)
-        {
-            if (Count == 1)
+            if (parent == null)
             {
                 root = null;
+                return;
             }
-            else
-            {
-                SwapRootNode(rootNode);
-            }
-        }
 
-        private void SwapRootNode(Node<T> rootNode)
-        {
-            if (root.HasOneChild())
-            {
-                root = root.Left ?? root.Right;
-            }
-            else
-            {
-                Node<T> newRoot = FindNewRoot(root.Right);
-                newRoot.Left = root.Left;
-                root = root.Right;
-            }
+            parent.RemoveChild(childNode);
         }
 
         private void ThrowArgumentException(T[] array, int arrayIndex)
