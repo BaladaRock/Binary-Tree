@@ -55,7 +55,7 @@ namespace BinaryTree
 
         public void Clear()
         {
-            ThrowReadOnly();
+            ThrowReadOnlyException();
 
             root = null;
             Count = 0;
@@ -108,7 +108,7 @@ namespace BinaryTree
 
         public bool Remove(T item)
         {
-            ThrowReadOnly();
+            ThrowReadOnlyException();
 
             Node<T> parent = null;
             var foundNode = FindNode(root, item, ref parent);
@@ -242,7 +242,7 @@ namespace BinaryTree
 
         private void ThrowCopyToExceptions(T[] array, int arrayIndex)
         {
-            ThrowNull(array);
+            ThrowNullException(array);
             ThrowIndexException(arrayIndex);
             ThrowArgumentException(array, arrayIndex);
         }
@@ -269,11 +269,11 @@ namespace BinaryTree
 
         private void ThrowInsertExceptions(Node<T> node)
         {
-            ThrowReadOnly();
-            ThrowNull(node);
+            ThrowReadOnlyException();
+            ThrowNullException(node);
         }
 
-        private void ThrowNull(object element)
+        private void ThrowNullException(object element)
         {
             if (element != null)
             {
@@ -283,7 +283,7 @@ namespace BinaryTree
             throw new ArgumentNullException(nameof(element));
         }
 
-        private void ThrowReadOnly()
+        private void ThrowReadOnlyException()
         {
             if (!IsReadOnly)
             {

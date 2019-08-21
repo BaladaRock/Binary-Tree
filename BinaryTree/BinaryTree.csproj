@@ -29,4 +29,16 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="CollectionsClasses">
+      <HintPath>..\CollectionsClasses.dll</HintPath>
+    </Reference>
+    <Reference Include="Dictionary">
+      <HintPath>..\Dictionary.dll</HintPath>
+    </Reference>
+    <Reference Include="Linked_List">
+      <HintPath>..\Linked_List.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
