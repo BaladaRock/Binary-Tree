@@ -130,7 +130,7 @@ namespace BinaryTree
         }
 
         private Node<T> FindNode(Node<T> rootNode, T item, ref Node<T> parent)
-            {
+        {
             if (rootNode == null)
             {
                 return null;
@@ -200,6 +200,17 @@ namespace BinaryTree
                    .Concat(PreOrderTraversal(node.Right));
         }
 
+        private void RemoveChildNode(Node<T> parent, Node<T> childNode)
+        {
+            if (parent == null)
+            {
+                root = null;
+                return;
+            }
+
+            parent.RemoveChild(childNode);
+        }
+
         private void RemoveItem(Node<T> parent, Node<T> foundNode, T value)
         {
             if (foundNode.IsLeaf())
@@ -217,17 +228,6 @@ namespace BinaryTree
             Remove(valueToReplace);
 
             foundNode.ReplaceValue(valueToReplace, value);
-        }
-
-        private void RemoveChildNode(Node<T> parent, Node<T> childNode)
-        {
-            if (parent == null)
-            {
-                root = null;
-                return;
-            }
-
-            parent.RemoveChild(childNode);
         }
 
         private void ThrowArgumentException(T[] array, int arrayIndex)
